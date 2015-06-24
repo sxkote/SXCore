@@ -58,7 +58,7 @@ namespace SXCore.Lexems
         }
         #endregion
 
-        #region Functions
+        #region Common
         public override string ToString()
         {
             switch (this.Value)

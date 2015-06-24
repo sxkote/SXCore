@@ -47,6 +47,26 @@ namespace SXCore.Lexems
             //return String.IsNullOrEmpty(this.Name) ? this.Value.ToString() : this.Name; 
             return this.Name;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is SXLexemValue)
+            {
+                return this.Value.Equals(obj);
+            }
+
+            if (obj is SXLexemVariable)
+            {
+                return this.Value.Equals((obj as SXLexemVariable).Value);
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Value == null ? 0 : this.Value.GetHashCode();
+        }
         #endregion
 
         #region Calculations

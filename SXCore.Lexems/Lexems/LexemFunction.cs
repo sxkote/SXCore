@@ -33,12 +33,13 @@ namespace SXCore.Lexems
                 throw new FormatException("Function Name is incorrect");
 
             _arguments = new List<SXExpression>();
-            
+
             var arguments_input = text.Substring(index + 1, text.Length - 1 - index - 1);
 
             var args = SXLexem.Split(arguments_input, new char[] { ';' }, SXLexemBracket.DefaultBrackets);
-            foreach (var arg in args)
-                _arguments.Add(new SXExpression(arg));
+            if (args != null)
+                foreach (var arg in args)
+                    _arguments.Add(new SXExpression(arg));
         }
         #endregion
 
