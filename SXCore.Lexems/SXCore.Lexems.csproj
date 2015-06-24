@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{68CA2380-A4DC-4984-ACBA-835BF193C272}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SXCore.Lexems</RootNamespace>
+    <AssemblyName>SXCore.Lexems</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Analyzer.cs" />
+    <Compile Include="Brackets.cs" />
+    <Compile Include="BracketsBalancer.cs" />
+    <Compile Include="Environment.cs" />
+    <Compile Include="Expression.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Lexems\LexemFunction.cs" />
+    <Compile Include="Lexems\LexemList.cs" />
+    <Compile Include="Lexems\LexemVariable.cs" />
+    <Compile Include="Poliz.cs" />
+    <Compile Include="Lexems\Symbols\LexemBracket.cs" />
+    <Compile Include="Lexems\Symbols\LexemComma.cs" />
+    <Compile Include="Lexems\Symbols\LexemOperator.cs" />
+    <Compile Include="Lexems\Symbols\LexemSwitch.cs" />
+    <Compile Include="Lexems\Symbols\_LexemSymbol.cs" />
+    <Compile Include="Lexems\Values\LexemBool.cs" />
+    <Compile Include="Lexems\Values\LexemComplex.cs" />
+    <Compile Include="Lexems\Values\LexemDate.cs" />
+    <Compile Include="Lexems\Values\LexemNumber.cs" />
+    <Compile Include="Lexems\Values\LexemSpan.cs" />
+    <Compile Include="Lexems\Values\LexemStruct.cs" />
+    <Compile Include="Lexems\Values\LexemText.cs" />
+    <Compile Include="Lexems\Lexem.cs" />
+    <Compile Include="Lexems\LexemKeyword.cs" />
+    <Compile Include="Lexems\Values\LexemVoid.cs" />
+    <Compile Include="Lexems\Values\_LexemValue.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
