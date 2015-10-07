@@ -36,7 +36,7 @@ namespace SXCore.Lexems
 
             var arguments_input = text.Substring(index + 1, text.Length - 1 - index - 1);
 
-            var args = SXLexem.Split(arguments_input, new char[] { ';' }, SXLexemBracket.DefaultBrackets);
+            var args = SXLexem.Split(arguments_input, new char[] { ';',',' }, SXLexemBracket.DefaultBrackets);
             if (args != null)
                 foreach (var arg in args)
                     _arguments.Add(new SXExpression(arg));

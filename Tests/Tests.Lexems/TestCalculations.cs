@@ -50,8 +50,6 @@ namespace Tests.Lexems
             Assert.AreEqual(new DateTime(2015, 6, 30), SXExpression.Calculate("'23.06.2015' + '7.0:0:0'").Value);
 
             Assert.AreEqual(1, SXExpression.Calculate("sin(pi()/2)"));
-
-            Assert.IsTrue(SXExpression.Calculate("sin(pi()/2)") == 1);
         }
 
         [TestMethod]

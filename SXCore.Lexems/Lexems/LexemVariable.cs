@@ -25,6 +25,12 @@ namespace SXCore.Lexems
         #endregion
 
         #region Constructors
+        protected SXLexemVariable()
+        {
+            _name = "";
+            _value = null;
+        }
+
         public SXLexemVariable(string name, SXLexemValue value = null)
         {
             _name = name;
@@ -32,11 +38,6 @@ namespace SXCore.Lexems
             if (!SXLexemVariable.CheckName(this.Name))
                 throw new FormatException(String.Format("Variable Name {0} is incorrect", this.Name ?? ""));
 
-            _value = value;
-        }
-
-        protected SXLexemVariable(SXLexemValue value)
-        {
             _value = value;
         }
         #endregion
@@ -81,28 +82,28 @@ namespace SXCore.Lexems
 
         #region Operators
         public static implicit operator SXLexemVariable(SXLexemValue value)
-        { return new SXLexemVariable(value); }
+        { return new SXLexemVariable() { _value = value }; }
 
         public static implicit operator SXLexemVariable(decimal value)
-        { return new SXLexemVariable(value); }
+        { return new SXLexemVariable() { _value = value }; }
 
         public static implicit operator SXLexemVariable(double value)
-        { return new SXLexemVariable(value); }
+        { return new SXLexemVariable() { _value = value }; }
 
         public static implicit operator SXLexemVariable(int value)
-        { return new SXLexemVariable(value); }
+        { return new SXLexemVariable() { _value = value }; }
 
         public static implicit operator SXLexemVariable(bool value)
-        { return new SXLexemVariable(value); }
+        { return new SXLexemVariable() { _value = value }; }
 
         public static implicit operator SXLexemVariable(DateTime value)
-        { return new SXLexemVariable(value); }
+        { return new SXLexemVariable() { _value = value }; }
 
         public static implicit operator SXLexemVariable(TimeSpan value)
-        { return new SXLexemVariable(value); }
+        { return new SXLexemVariable() { _value = value }; }
 
         public static implicit operator SXLexemVariable(string value)
-        { return new SXLexemVariable(value); }
+        { return new SXLexemVariable() { _value = value }; }
         #endregion
 
         #region Statics

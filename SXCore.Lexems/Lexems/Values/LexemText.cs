@@ -72,30 +72,39 @@ namespace SXCore.Lexems
 
                 switch (func.Name.Trim().ToLower())
                 {
+                    case "tostring":
+                        return this.Value;
+                    case "tonumber":
+                        return SXLexemNumber.ParseDouble(this.Value, true);
+                    case "todatetime":
+                    case "todate":
+                        {
+                            return SXLexemDate.ParseDatetime(this.Value);
+                        }
                     case "trim":
-                        return  this.Value.Trim();
+                        return this.Value.Trim();
                     case "tolower":
-                        return  this.Value.ToLower();
+                        return this.Value.ToLower();
                     case "toupper":
-                        return  this.Value.ToUpper();
+                        return this.Value.ToUpper();
                     case "startswith":
-                        return  this.Value.StartsWith(getFuncString(0));
+                        return this.Value.StartsWith(getFuncString(0));
                     case "endswith":
-                        return  this.Value.EndsWith(getFuncString(0));
+                        return this.Value.EndsWith(getFuncString(0));
                     case "contains":
-                        return  this.Value.Contains(getFuncString(0));
+                        return this.Value.Contains(getFuncString(0));
                     case "like":
-                        return  this.Value.Like(getFuncString(0));
+                        return this.Value.Like(getFuncString(0));
                     case "indexof":
-                        return  this.Value.IndexOf(getFuncString(0));
+                        return this.Value.IndexOf(getFuncString(0));
                     case "replace":
-                        return  this.Value.Replace(getFuncString(0), getFuncString(1));
+                        return this.Value.Replace(getFuncString(0), getFuncString(1));
                     case "substring":
                         {
                             if (func.Arguments.Count >= 2)
-                                return  this.Value.Substring((int)getFuncNumber(0), (int)getFuncNumber(1));
+                                return this.Value.Substring((int)getFuncNumber(0), (int)getFuncNumber(1));
                             else
-                                return  this.Value.Substring((int)getFuncNumber(0), (int)getFuncNumber(1));
+                                return this.Value.Substring((int)getFuncNumber(0));
                         }
                 }
             }

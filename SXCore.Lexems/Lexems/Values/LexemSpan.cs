@@ -64,6 +64,26 @@ namespace SXCore.Lexems
         { return this.Value.GetHashCode(); }
         #endregion
 
+        #region Calculations
+        public override SXLexemVariable Execute(SXLexem lexem, IEnvironment environment = null)
+        {
+            if (lexem == null) return null;
+
+            if (lexem is SXLexemFunction)
+            {
+                var func = lexem as SXLexemFunction;
+
+                switch (((SXLexemFunction)lexem).Name.ToLower())
+                {
+                    case "tostring":
+                        return this.Value.ToString();
+                }
+            }
+
+            return base.Execute(lexem, environment);
+        }
+        #endregion
+
         #region Operators
         public static implicit operator SXLexemSpan(TimeSpan span)
         { return new SXLexemSpan(span); }

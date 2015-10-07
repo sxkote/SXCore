@@ -31,7 +31,7 @@ namespace SXCore.Lexems
                         return new SXLexemBool(BoolType.True);
                     case BoolType.True:
                         return new SXLexemBool(BoolType.False);
-                    default: 
+                    default:
                         return new SXLexemBool(BoolType.Unknown);
                 }
             }
@@ -91,6 +91,26 @@ namespace SXCore.Lexems
 
         public override int GetHashCode()
         { return this.Value.GetHashCode(); }
+        #endregion
+
+        #region Calculations
+        public override SXLexemVariable Execute(SXLexem lexem, IEnvironment environment = null)
+        {
+            if (lexem == null) return null;
+
+            if (lexem is SXLexemFunction)
+            {
+                var func = lexem as SXLexemFunction;
+
+                switch (((SXLexemFunction)lexem).Name.ToLower())
+                {
+                    case "tostring":
+                        return this.Value.ToString();
+                }
+            }
+
+            return base.Execute(lexem, environment);
+        }
         #endregion
 
         #region Operators

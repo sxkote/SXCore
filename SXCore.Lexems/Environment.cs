@@ -76,7 +76,7 @@ namespace SXCore.Lexems
             var variable = this.Get(name);
             if (variable == null)
             {
-                variable = new SXLexemVariable(name);
+                variable = new SXLexemVariable(name, value);
                 this.Variables.Add(variable);
             }
 

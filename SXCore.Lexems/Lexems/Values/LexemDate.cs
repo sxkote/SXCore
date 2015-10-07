@@ -9,7 +9,7 @@ namespace SXCore.Lexems
 {
     public class SXLexemDate : SXLexemValue
     {
-        static public string[] Formats = { "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM-dd", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-ddTHH:mm", "dd.MM.yyyy HH:mm:ss", "dd.MM.yyyy HH:mm", "dd.MM.yyyy" };
+        static public string[] Formats = { "dd.MM.yyyy HH:mm:ss", "dd.MM.yyyy HH:mm", "dd.MM.yyyy", "dd.MM.yy HH:mm:ss", "dd.MM.yy HH:mm", "dd.MM.yy", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM-dd", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-ddTHH:mm" };
 
         public enum TenseType { Past, Present, Future };
 
@@ -81,7 +81,7 @@ namespace SXCore.Lexems
                 case TenseType.Future:
                     return "'future'";
                 default:
-                    return String.Format("'{0}'", this.Value.ToString("dd.MM.yyyy HH:mm:ss"));
+                    return String.Format("'{0}'", this.Value.ToString(Formats.First()));
             }
         }
 
@@ -242,6 +242,8 @@ namespace SXCore.Lexems
                 
                 switch (((SXLexemFunction)lexem).Name.ToLower())
                 {
+                    case "tostring":
+                        return this.Value.ToString(Formats.First());
                     case "addyears":
                         return  this.Value.Date.AddYears((int)getFuncNumber(0));
                     case "addmonths":
@@ -262,6 +264,24 @@ namespace SXCore.Lexems
         #endregion
 
         #region Statics
+        static public DateTime ParseDatetime(string input, string format = null)
+        {
+            DateTime result;
+
+            if (String.IsNullOrEmpty(format))
+            {
+                if (!DateTime.TryParseExact(input.Trim(), SXLexemDate.Formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+                    throw new FormatException("DateTime is in wrong format");
+            }
+            else
+            {
+                if (!DateTime.TryParseExact(input.Trim(), format, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+                    throw new FormatException("DateTime is in wrong format");
+            }
+
+            return result;
+        }
+
         new public static SXLexemDate Parse(ref string text)
         {
             if (String.IsNullOrEmpty(text))

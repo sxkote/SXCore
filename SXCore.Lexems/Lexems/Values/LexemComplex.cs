@@ -61,7 +61,9 @@ namespace SXCore.Lexems
             _re = re;
             _im = im;
         }
+#endregion
 
+        #region Common
         public override string ToString()
         {
             if (this.IsInfinity)
@@ -99,6 +101,26 @@ namespace SXCore.Lexems
 
         public override int GetHashCode()
         { return this.Norm.GetHashCode(); }
+        #endregion
+
+        #region Calculations
+        public override SXLexemVariable Execute(SXLexem lexem, IEnvironment environment = null)
+        {
+            if (lexem == null) return null;
+
+            if (lexem is SXLexemFunction)
+            {
+                var func = lexem as SXLexemFunction;
+
+                switch (((SXLexemFunction)lexem).Name.ToLower())
+                {
+                    case "tostring":
+                        return this.ToString();
+                }
+            }
+
+            return base.Execute(lexem, environment);
+        }
         #endregion
 
         #region Operators

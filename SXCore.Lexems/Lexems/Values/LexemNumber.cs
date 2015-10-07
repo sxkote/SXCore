@@ -91,6 +91,26 @@ namespace SXCore.Lexems
         { return this.Value.GetHashCode(); }
         #endregion
 
+        #region Calculations
+        public override SXLexemVariable Execute(SXLexem lexem, IEnvironment environment = null)
+        {
+            if (lexem == null) return null;
+
+            if (lexem is SXLexemFunction)
+            {
+                var func = lexem as SXLexemFunction;
+
+                switch (((SXLexemFunction)lexem).Name.ToLower())
+                {
+                    case "tostring":
+                        return this.Value.ToString();
+                }
+            }
+
+            return base.Execute(lexem, environment);
+        }
+        #endregion
+
         #region Operators
         public static implicit operator SXLexemNumber(decimal number)
         { return new SXLexemNumber((double)number); }
@@ -386,7 +406,7 @@ namespace SXCore.Lexems
                 }
                 #endregion
 
-                if (input.Length == 1 && (input[0] == '.' || input[0] == ','))
+                if (String.IsNullOrEmpty(input) || input.Length == 1 && (input[0] == '.' || input[0] == ','))
                     return null;
 
                 var result = new SXLexemNumber(input);

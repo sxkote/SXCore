@@ -141,7 +141,7 @@ namespace SXCore.Lexems
                 }
                 else if (_lexems[i] is SXLexemFunction)
                 {
-                    var prev = i - 1 >= 0 ? _lexems[i - 1] : null;
+                    var prev = stack.Count <= 0 ? null : stack.Peek(); //i - 1 >= 0 ? _lexems[i - 1] : null;
                     var next = i + 1 < _lexems.Count ? _lexems[i + 1] : null;
 
                     if (prev != null && (prev is SXLexemValue || prev is SXLexemVariable) && next != null && next is SXLexemOperator && ((SXLexemOperator)next).OperatorType == SXLexemOperator.OperationType.Code)
