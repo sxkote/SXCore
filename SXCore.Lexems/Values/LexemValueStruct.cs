@@ -1,36 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SXCore.Lexems
+namespace SXCore.Lexems.Values
 {
-    public class SXLexemStruct : SXLexemValue
+    public class LexemValueStruct : LexemValue
     {
-        #region Variables
-        protected List<SXLexemVariable> _members = new List<SXLexemVariable>();
-        #endregion
+        protected List<LexemVariable> _members = new List<LexemVariable>();
 
-        #region Properties
-        public override ValueType Type
-        { get { return ValueType.Struct; } }
-
-        public IList<SXLexemVariable> Members
+        public IList<LexemVariable> Members
         { get { return _members.AsReadOnly(); } }
 
-        public SXLexemVariable this[string name]
+        public LexemVariable this[string name]
         {
             get
             {
-                return this.Members.FirstOrDefault(m => m.Name == name);
+                return this.Members.FirstOrDefault(m => m.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
             }
             set
             {
                 if (value == null)
                     return;
 
-                var member = this.Members.FirstOrDefault(m => m.Name == name);
+                var member = this[name];
 
                 if (member != null)
                     member.Value = value.Value;
@@ -38,38 +30,34 @@ namespace SXCore.Lexems
                     this.Members.Add(value);
             }
         }
-        #endregion
 
-        #region Constructors
-        public SXLexemStruct(string text)
+        public LexemValueStruct(string text)
         {
             string input = String.IsNullOrEmpty(text) ? null : text.Trim();
             if (String.IsNullOrEmpty(input) || input[0] != '{' || input[input.Length - 1] != '}')
-                throw new FormatException("Struct Value input is empty");
+                throw new FormatException("Struct format is incorrect");
 
             // split the input text into members inputs
-            var values = SXLexem.Split(input.Substring(1, input.Length - 2).Trim(), new char[] { ',' }, new BracketPair[] { new BracketPair('{', '}') });
+            var values = Lexem.Split(input.Substring(1, input.Length - 2).Trim(), new char[] { ',' }, new SymbolPair[] { new SymbolPair('{', '}') });
             if (values == null || values.Count <= 0)
-                throw new FormatException("Struct Value format is wrong");
+                throw new FormatException("Struct format is incorrect: no members");
 
             // get members from from inputs
             foreach (var value in values)
             {
-                var member = SXLexemStruct.ParseMember(value);
+                var member = LexemValueStruct.ParseMember(value);
                 if (member == null)
-                    throw new FormatException("Struct Value format is wrong");
+                    throw new FormatException("Struct format is incorrect: can't parse member");
 
                 _members.Add(member);
             }
         }
 
-        public SXLexemStruct(IEnumerable<SXLexemVariable> members)
+        public LexemValueStruct(IEnumerable<LexemVariable> members)
         {
-            _members = members == null ? new List<SXLexemVariable>() : members.ToList();
+            _members = members == null ? new List<LexemVariable>() : members.ToList();
         }
-        #endregion
 
-        #region Common
         public override string ToString()
         {
             if (this.Members == null)
@@ -77,24 +65,20 @@ namespace SXCore.Lexems
 
             var records = this.Members.Select(m => String.Format("\"{0}\":{1}", m.Name, m.Value.ToString()));
 
-            return "{" + String.Join(",", records)+ "}";
+            return "{" + String.Join(",", records) + "}";
         }
-        #endregion
 
-        #region Calculations
-        public override SXLexemVariable Execute(SXLexem lexem, IEnvironment environment = null)
+        public override LexemVariable Execute(Lexem lexem, ILexemEnvironment environment = null)
         {
             if (lexem == null) return null;
 
-            if (lexem is SXLexemVariable)
-                return this[((SXLexemVariable)lexem).Name];
+            if (lexem is LexemVariable)
+                return this[((LexemVariable)lexem).Name];
 
-            return base.Execute(lexem, environment);
+            return null;
         }
-        #endregion
 
-        #region Statics
-       new  public static SXLexemStruct Parse(ref string text)
+        new public static LexemValueStruct Parse(ref string text)
         {
             if (String.IsNullOrEmpty(text))
                 return null;
@@ -105,7 +89,7 @@ namespace SXCore.Lexems
                 return null;
 
             // find the end of the lexem (find closing bracket '}')
-            int index = SXLexem.Find(text, new char[] { '}' }, 1, new BracketPair[] { new BracketPair('{', '}') });
+            int index = Lexem.Find(text, new char[] { '}' }, 1, new SymbolPair[] { new SymbolPair('{', '}') });
             if (index <= 0)
                 return null;
 
@@ -116,7 +100,7 @@ namespace SXCore.Lexems
 
             try
             {
-                var result = new SXLexemStruct(input);
+                var result = new LexemValueStruct(input);
 
                 text = text.Crop(index + 1);
 
@@ -128,7 +112,7 @@ namespace SXCore.Lexems
             }
         }
 
-        public static SXLexemVariable ParseMember(string text)
+        public static LexemVariable ParseMember(string text)
         {
             if (String.IsNullOrEmpty(text))
                 return null;
@@ -139,16 +123,15 @@ namespace SXCore.Lexems
 
             // parse name of the member
             var name = text.Substring(0, index);
-            if (name.Length >= 2 && (name[0] == '"' && name[name.Length - 1] == '"' ||  name[0] == '\'' && name[name.Length - 1] == '\''))
+            if (name.Length >= 2 && (name[0] == '"' && name[name.Length - 1] == '"' || name[0] == '\'' && name[name.Length - 1] == '\''))
                 name = name.Substring(1, name.Length - 2);
 
             // parse value of the member
-            var value = SXLexemValue.ParseExact(text.Substring(index + 1));
+            var value = LexemValue.ParseExact(text.Substring(index + 1));
             if (value == null)
                 return null;
 
-            return new SXLexemVariable(name, value);
+            return new LexemVariable(name, value);
         }
-        #endregion
     }
 }

@@ -1,5 +1,5 @@
 ﻿using SXCore.Common.Contracts;
-using SXCore.Common.Infrastructure.Values;
+using SXCore.Infrastructure.Values;
 using SXCore.Common.Values;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SXCore.Common.Infrastructure.Services.Notifications
+namespace SXCore.Infrastructure.Services.Notifications
 {
     public sealed class EmailNotificationService : INotificationService
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SXCore.Common.Infrastructure.Services
+namespace SXCore.Infrastructure.Services
 {
     public class AppSettingsProvider : ISettingsProvider
     {

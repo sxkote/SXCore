@@ -1,5 +1,5 @@
 ﻿using SXCore.Common.Contracts;
-using SXCore.Common.Infrastructure.Values;
+using SXCore.Infrastructure.Values;
 using SXCore.Common.Services;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SXCore.Common.Infrastructure.Services.FileStorage
+namespace SXCore.Infrastructure.Services.FileStorage
 {
     public class HostingFileStorageService : LocalFileStorageService
     {

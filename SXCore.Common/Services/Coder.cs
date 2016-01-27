@@ -6,37 +6,39 @@ using System.Threading.Tasks;
 
 namespace SXCore.Common.Services
 {
-    public class CoderService
+    public class Coder
     {
         protected static char[] Digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
-        public const int MinBaseLength = 2;
-        public const int OctBaseLength = 8;
-        public const int HexBaseLength = 16;
-        public const int MaxBaseLength = 36;
+        public const int MinRadixLength = 2;
+        public const int BinRadixLength = 2;
+        public const int OctRadixLength = 8;
+        public const int DecRadixLength = 10;
+        public const int HexRadixLength = 16;
+        public const int MaxRadixLength = 36;
 
-        private readonly int _baseLength = 16;
+        private readonly int _radix = 16;
 
-        public int BaseLength
+        public int Radix
         {
             get
             {
-                if (_baseLength < MinBaseLength)
-                    return MinBaseLength;
-                if (_baseLength > MaxBaseLength)
-                    return MaxBaseLength;
-                return _baseLength;
+                if (_radix < MinRadixLength)
+                    return MinRadixLength;
+                if (_radix > MaxRadixLength)
+                    return MaxRadixLength;
+                return _radix;
             }
         }
 
-        public CoderService(int baseLength = 16)
+        public Coder(int radix = 16)
         {
-            if (baseLength > MaxBaseLength)
-                _baseLength = MaxBaseLength;
-            else if (baseLength < MinBaseLength)
-                _baseLength = MinBaseLength;
+            if (radix > MaxRadixLength)
+                _radix = MaxRadixLength;
+            else if (radix < MinRadixLength)
+                _radix = MinRadixLength;
             else 
-                _baseLength = baseLength;
+                _radix = radix;
         }
 
         public string Encode(long value)
@@ -45,37 +47,36 @@ namespace SXCore.Common.Services
 
             long rest = value;
 
-            var length = this.BaseLength;
+            var length = this.Radix;
 
             while (rest > length)
             {
-                var letter = rest % this.BaseLength;
-                result = CoderService.Digits[letter] + result;
-                rest = rest / this.BaseLength;
+                var letter = rest % this.Radix;
+                result = Coder.Digits[letter] + result;
+                rest = rest / this.Radix;
             }
 
-            return CoderService.Digits[rest % this.BaseLength] + result;
+            return Coder.Digits[rest % this.Radix] + result;
         }
 
         public string Encode(DateTime date)
         {
-            string min = this.Encode(date.Minute);
             return String.Format("{0}{1}{2}{3}{4}",
-                                this.Encode(date.Year - 2000),
+                                this.Encode(date.Year - 1900).PadLeft(2, '0'),
                                 this.Encode(date.Month),
                                 this.Encode(date.Day),
                                 this.Encode(date.Hour),
-                                min.Length <= 1 ? "0" + min : min);
+                                this.Encode(date.Minute).PadLeft(2, '0'));
         }
 
-        public long Decode(string val)
+        public long Decode(string value)
         {
-            if (String.IsNullOrEmpty(val))
+            if (String.IsNullOrEmpty(value))
                 return 0;
 
             long result = 0;
-            for (int i = 0; i < val.Length; i++)
-                result += Digits.ToList().IndexOf(val[val.Length - 1 - i]) * (long)Math.Pow(this.BaseLength, i);
+            for (int i = 0; i < value.Length; i++)
+                result += Digits.ToList().IndexOf(value[value.Length - 1 - i]) * (long)Math.Pow(this.Radix, i);
 
             return result;
         }
@@ -86,13 +87,13 @@ namespace SXCore.Common.Services
 
             string result = "";
             for (int i = 0; i < Math.Max(codeLength, 0); i++)
-                result += Digits[rand.Next(this.BaseLength)];
+                result += Digits[rand.Next(this.Radix)];
             return result;
         }
 
-        static public string GenerateCode(int codeLength, int baseLength = MaxBaseLength, bool capitalize = false)
+        static public string Generate(int codeLength, int radix = MaxRadixLength, bool capitalize = false)
         {
-            var coder = new CoderService(baseLength);
+            var coder = new Coder(radix);
             var code = coder.Generate(codeLength).ToLower();
 
             if (capitalize && code.Length > 1)

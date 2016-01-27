@@ -10,12 +10,12 @@ namespace Tests.Lexems
         [TestMethod]
         public void ParseSymbolBracket()
         {
-            foreach (var pair in SXLexemBracket.DefaultBrackets)
+            foreach (var pair in LexemBracket.Brackets)
             {
                 string input = pair.Open.ToString() + pair.Close.ToString();
 
-                var bracket1 = SXLexemSymbol.Parse(ref input) as SXLexemBracket;
-                var bracket2 = SXLexemSymbol.Parse(ref input) as SXLexemBracket;
+                var bracket1 = LexemSymbol.Parse(ref input) as LexemBracket;
+                var bracket2 = LexemSymbol.Parse(ref input) as LexemBracket;
 
                 Assert.IsNotNull(bracket1);
                 Assert.IsNotNull(bracket2);
@@ -38,14 +38,14 @@ namespace Tests.Lexems
         [TestMethod]
         public void ParseSymbolComma()
         {
-            foreach (var com in SXLexemComma.Commas)
+            foreach (var com in LexemComma.Commas)
             {
                 string input = com;
 
-                var symbol = SXLexemSymbol.Parse(ref input) as SXLexemComma;
+                var symbol = LexemSymbol.Parse(ref input) as LexemComma;
 
                 Assert.IsNotNull(symbol);
-                Assert.IsTrue(symbol is SXLexemComma);
+                Assert.IsTrue(symbol is LexemComma);
                 Assert.AreEqual(com, symbol.Text);
 
                 Assert.IsTrue(String.IsNullOrEmpty(input));
@@ -55,11 +55,11 @@ namespace Tests.Lexems
         [TestMethod]
         public void ParseSymbolOperator()
         {
-            foreach (var op in SXLexemOperator.Operators)
+            foreach (var op in LexemOperator.Operators)
             {
                 string input = op;
 
-                var symbol = SXLexemSymbol.Parse(ref input) as SXLexemOperator;
+                var symbol = LexemSymbol.Parse(ref input) as LexemOperator;
 
                 Assert.IsNotNull(symbol);
                 Assert.AreEqual(op, symbol.Text);
@@ -73,8 +73,8 @@ namespace Tests.Lexems
         {
             string input = "?:";
 
-            var question = SXLexemSymbol.Parse(ref input) as SXLexemSwitch;
-            var answer = SXLexemSymbol.Parse(ref input) as SXLexemSwitch;
+            var question = LexemSymbol.Parse(ref input) as LexemSwitch;
+            var answer = LexemSymbol.Parse(ref input) as LexemSwitch;
 
             Assert.IsNotNull(question);
             Assert.IsNotNull(answer);

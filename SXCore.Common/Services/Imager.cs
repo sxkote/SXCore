@@ -269,7 +269,6 @@ namespace SXCore.Common.Services
                     ms.Position = 0;
                     this.Image = Image.FromStream(ms);
                     this._properties = this.Image.PropertyItems;
-                    ms.Close();
                 }
             }
 

@@ -24,41 +24,19 @@ namespace SXCore.Common.Services
         static public DateTimeOffset Now
         { get { return TimeZoneInfo.ConvertTime(DateTimeOffset.Now, TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time")); } }
 
-        //static public string GeneratePassword(int length)
-        //{
-        //    return "qwerty";
-        //}
-
-        static public string HashPassword(string password, int level = 10)
+        static public string HashPassword(string password)
         {
-            return BCrypt.Net.BCrypt.HashPassword(password, level);
+            return GetMD5(password);
         }
 
         static public bool VerifyPassword(string password, string hash)
         {
-            return BCrypt.Net.BCrypt.Verify(password, hash);
+            return hash.Equals(GetMD5(password), StringComparison.InvariantCultureIgnoreCase);
         }
 
-        static public string GenerateCode(string prefix = "", byte subscriptionID = 0, int length = 6)
+        static public string GenerateCode(string prefix = "", int length = 8)
         {
-            var service = new CoderService(36);
-
-            string codePrefix = String.IsNullOrEmpty(prefix) ? "" : (prefix.TrimEnd('-') + "-");
-
-            string codeSubscr = subscriptionID <= 0 ? "" : (subscriptionID.ToString() + "-");
-            if (String.IsNullOrEmpty(codePrefix) && !String.IsNullOrEmpty(codeSubscr))
-                codeSubscr = "S" + codeSubscr;
-
-            string codeDate = service.Encode(CommonService.Now.DateTime);
-
-            string codeRandom = service.Generate(length <= 0 ? 6 : length);
-
-            return String.Format("{0}{1}{2}-{3}", codePrefix, codeSubscr, codeDate, codeRandom);
-        }
-
-        static public string GenerateEntityCode(string prefix = "", int length = 8)
-        {
-            var service = new CoderService(36);
+            var service = new Coder(36);
 
             string codePrefix = String.IsNullOrEmpty(prefix) ? "" : (prefix.TrimEnd('-') + "-");
 
@@ -67,6 +45,11 @@ namespace SXCore.Common.Services
             string codeRandom = service.Generate(length <= 0 ? 8 : length);
 
             return String.Format("{0}{1}-{2}", codePrefix, codeDate, codeRandom);
+        }
+
+        static public string GeneratePassword(bool capitalize = true)
+        {
+            return Coder.Generate(8, Coder.MaxRadixLength, capitalize);
         }
 
         static public string GetMD5(byte[] data)
@@ -114,76 +97,5 @@ namespace SXCore.Common.Services
 
             return null;
         }
-
-        //static public string ReplaceParams(this string text, ValuesCollection collection)
-        //{
-        //    if (String.IsNullOrEmpty(text))
-        //        return "";
-
-        //    var result = Regex.Replace(text, @"#(?<paramname>[\w\-\.]+)", match =>
-        //    {
-        //        string paramname = match.Groups["paramname"].Value;
-
-        //        var value = collection.GetValue(paramname);
-
-        //        return value == null ? "" : value.ToString();
-        //    });
-
-        //    return result;
-        //}
-
-        //static public ICollection<T> Merge<T, U>(this ICollection<T> baseCollection, ICollection<U> mergeCollection, Action<T, U> onMerge = null, Action<T> onAdd = null, Action<T> onDelete = null, Func<T, U, bool> compare = null)
-        //    where T : class, new()
-        //    where U : class
-        //{
-        //    if (mergeCollection == null)
-        //        return baseCollection;
-
-        //    var baseList = baseCollection.ToList();
-        //    for (int i = baseList.Count - 1; i >= 0; i--)
-        //    {
-        //        var currentItem = baseList[i];
-
-        //        var mergeItem = mergeCollection.SingleOrDefault(item => compare == null ? currentItem.Equals(item) : compare(currentItem, item));
-
-        //        if (mergeItem == null)
-        //        {
-        //            baseCollection.Remove(currentItem);
-
-        //            if (onDelete != null)
-        //                onDelete(currentItem);
-        //        }
-        //        else if (onMerge != null)
-        //            onMerge(currentItem, mergeItem);
-        //    }
-
-        //    var mergeList = mergeCollection.ToList();
-        //    for (int i = 0; i < mergeList.Count; i++)
-        //    {
-        //        var mergeItem = mergeList[i];
-
-        //        var currentItem = baseCollection.SingleOrDefault(item => compare == null ? item.Equals(mergeItem) : compare(item, mergeItem));
-
-        //        if (currentItem == null && onMerge != null)
-        //        {
-        //            currentItem = new T();
-        //            if (onMerge != null)
-        //                onMerge(currentItem, mergeItem);
-
-        //            baseCollection.Add(currentItem);
-        //            if (onAdd != null)
-        //                onAdd(currentItem);
-        //        }
-        //    }
-
-        //    return baseCollection;
-        //}
-
-        //static public T[] AddRequired<T>(this T[] array, T item)
-        //{
-        //    var list = array == null || array.Length <= 0 ? new List<T>() : array.ToList();
-        //    list.Add(item);
-        //    return list.ToArray();
-        //}
     }
 }

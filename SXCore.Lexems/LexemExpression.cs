@@ -1,46 +1,49 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 
 namespace SXCore.Lexems
 {
-    public class SXExpression : SXAnalyser
+    public class LexemExpression : LexemAnalyser
     {
-        #region Variables
-        protected SXLexemVariable _variable = null;
-        protected SXLexemList _lexems = new SXLexemList();
-        protected SXPoliz _poliz = null;
-        #endregion
+        protected LexemVariable _variable = null;
+        protected LexemList _lexems = new LexemList();
+        protected LexemPoliz _poliz = null;
 
-        #region Properties
-        #endregion
-
-        #region Constructors
-        public SXExpression(string text)
+        public LexemExpression(string text)
         {
-            this.Analys(new SXLexemList(text));
+            this.Analys(new LexemList(text));
         }
 
-        public SXExpression(ICollection<SXLexem> collection)
+        public LexemExpression(ICollection<Lexem> collection)
         {
-            this.Analys(new SXLexemList(collection));
+            this.Analys(new LexemList(collection));
         }
-        #endregion
 
-        #region Common
         public override string ToString()
         {
             return _lexems.ToString();
         }
-        #endregion
+
+        public LexemVariable Calculate(ILexemEnvironment environment = null)
+        {
+            if (_poliz == null)
+                _poliz = LexemPoliz.Create(_lexems);
+
+            var result = _poliz.Calculate(environment);
+
+            if (_variable != null && !String.IsNullOrEmpty(_variable.Name) && environment != null && result != null)
+                environment.Set(_variable.Name, result.Value);
+
+            return result;
+        }
 
         #region Analys
-        protected override void Analys(SXLexemList lexems)
+        protected override void Analys(LexemList lexems)
         {
-            if (lexems.Count > 2 && lexems[0] is SXLexemVariable && lexems[1] is SXLexemOperator && (lexems[1] as SXLexemOperator).Text == "=")
+            if (lexems.Count > 2 && lexems[0] is LexemVariable && lexems[1] is LexemOperator && (lexems[1] as LexemOperator).Text == "=")
             {
-                _variable = lexems[0] as SXLexemVariable;
+                _variable = lexems[0] as LexemVariable;
                 
                 if (String.IsNullOrEmpty(_variable.Name))
                     throw new FormatException("Assignable Variable Name is empty");
@@ -51,16 +54,16 @@ namespace SXCore.Lexems
                 this.AnalysExpression(lexems);
         }
 
-        protected override void AnalysExpression(SXLexemList lexems)
+        protected override void AnalysExpression(LexemList lexems)
         {
-            var first = lexems == null ? null : lexems.FirstOrDefault() as SXLexemOperator;
-            if (first != null && first.OperatorType == SXLexemOperator.OperationType.Arithmetic && first.Text == "-")
+            var first = lexems == null ? null : lexems.FirstOrDefault() as LexemOperator;
+            if (first != null && first.OperatorType == LexemOperator.OperationType.Arithmetic && first.Text == "-")
                 lexems.Insert(0, 0);
 
             base.AnalysExpression(lexems);
         }
 
-        protected override void OnSwitch(SXLexemSwitch lexem, SXLexemList condition, SXLexemList then, SXLexemList other)
+        protected override void OnSwitch(LexemSwitch lexem, LexemList condition, LexemList then, LexemList other)
         {
             this.AnalysLogical(condition);
 
@@ -73,11 +76,11 @@ namespace SXCore.Lexems
             this.AnalysExpression(other);
         }
 
-        protected override void OnOperator(SXLexemOperator op, SXLexemList left, SXLexemList right)
+        protected override void OnOperator(LexemOperator op, LexemList left, LexemList right)
         {
             switch (op.OperatorType)
             {
-                case SXLexemOperator.OperationType.Logical:
+                case LexemOperator.OperationType.Logical:
                     {
                         if (op.Text == "||")
                         {
@@ -93,14 +96,14 @@ namespace SXCore.Lexems
                         }
                         return;
                     }
-                case SXLexemOperator.OperationType.Comparison:
+                case LexemOperator.OperationType.Comparison:
                     {
                         this.AnalysArithmetic(left);
                         _lexems.Add(op);
                         this.AnalysArithmetic(right);
                         return;
                     }
-                case SXLexemOperator.OperationType.Arithmetic:
+                case LexemOperator.OperationType.Arithmetic:
                     {
                         if (op.Text == "+" || op.Text == "-")
                         {
@@ -116,7 +119,7 @@ namespace SXCore.Lexems
                         }
                         return;
                     }
-                case SXLexemOperator.OperationType.Code:
+                case LexemOperator.OperationType.Code:
                     {
                         if (op.Text == "->" || op.Text == ".")
                         {
@@ -129,38 +132,23 @@ namespace SXCore.Lexems
             }
         }
 
-        protected override void OnElement(SXLexem lexem)
+        protected override void OnElement(Lexem lexem)
         {
-            if (lexem is SXLexemValue)
+            if (lexem is LexemValue)
                 _lexems.Add(lexem);
-            else if (lexem is SXLexemVariable)
+            else if (lexem is LexemVariable)
                 _lexems.Add(lexem);
-            else if (lexem is SXLexemFunction)
+            else if (lexem is LexemFunction)
                 _lexems.Add(lexem);
             else
                 throw new FormatException(String.Format("Expression Element not recognized: {0}", lexem.ToString()));
         }
 
-        protected override void OnElement(SXLexemList lexems)
+        protected override void OnElement(LexemList lexems)
         {
             _lexems.Add(lexems[0]);
             this.AnalysExpression(lexems.Range(1, lexems.Count - 2));
             _lexems.Add(lexems[lexems.Count - 1]);
-        }
-        #endregion
-
-        #region Calculating
-        public SXLexemVariable Calculate(IEnvironment environment = null)
-        {
-            if (_poliz == null)
-                _poliz = SXPoliz.Create(_lexems);
-
-            var result = _poliz.Calculate(environment);
-
-            if (_variable != null && !String.IsNullOrEmpty(_variable.Name) && environment != null && result != null)
-                environment.Set(_variable.Name, result.Value);
-
-            return result;
         }
         #endregion
 
@@ -328,11 +316,9 @@ namespace SXCore.Lexems
         //}
         #endregion
 
-        #region Statics
-        static public SXLexemVariable Calculate(string text, IEnvironment environment = null)
+        static public LexemVariable Calculate(string text, ILexemEnvironment environment = null)
         {
-            return new SXExpression(text).Calculate(environment);
+            return new LexemExpression(text).Calculate(environment);
         }
-        #endregion
     }
 }
