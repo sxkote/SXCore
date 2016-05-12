@@ -2,7 +2,6 @@
 using Microsoft.WindowsAzure.Storage.Blob;
 using SXCore.Common.Contracts;
 using SXCore.Infrastructure.Values;
-using SXCore.Common.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +25,8 @@ namespace SXCore.Infrastructure.Services.FileStorage
         }
 
         public AzureFileStorageService(string config)
-            : this(Newtonsoft.Json.JsonConvert.DeserializeObject<FileStorageConfig>(config)) { }
+            : this(Newtonsoft.Json.JsonConvert.DeserializeObject<FileStorageConfig>(config))
+        { }
 
         #region Functions
         protected CloudBlobClient GetStorageClient()
@@ -86,7 +86,21 @@ namespace SXCore.Infrastructure.Services.FileStorage
 
         protected string GetBlobBlockID(int blockID)
         {
-            return Convert.ToBase64String(Encoding.Default.GetBytes(blockID.ToString(BlockFormat)));
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(blockID.ToString(BlockFormat)));
+        }
+
+        protected IEnumerable<string> GetBlobBlocksOrdered(IEnumerable<string> blocks)
+        {
+            if (blocks == null)
+                return null;
+
+            var blockItems = blocks.Select(value => new
+            {
+                position = Convert.ToInt32(Encoding.UTF8.GetString(Convert.FromBase64String(value))),
+                name = value
+            });
+
+            return blockItems.OrderBy(i => i.position).Select(i => i.name);
         }
         #endregion
 
@@ -144,7 +158,7 @@ namespace SXCore.Infrastructure.Services.FileStorage
             await blob.PutBlockListAsync(new string[] { blockID });
         }
 
-        public void AppendFile(string path, byte[] data)
+        public void AppendFile(string path, byte[] data, int chunkID = -1)
         {
             if (data == null || data.Length <= 0)
                 return;
@@ -157,16 +171,17 @@ namespace SXCore.Infrastructure.Services.FileStorage
             if (blob.Exists())
                 blockIDs = (blob.DownloadBlockList()).Select(b => b.Name).ToList();
 
-            var newBlockID = this.GetBlobBlockID(blockIDs.Count);
+            var newBlockID = this.GetBlobBlockID(chunkID < 0 ? blockIDs.Count : chunkID);
 
             blob.PutBlock(newBlockID, new MemoryStream(data), null);
 
-            blockIDs.Add(newBlockID);
+            if (!blockIDs.Contains(newBlockID))
+                blockIDs.Add(newBlockID);
 
-            blob.PutBlockList(blockIDs);
+            blob.PutBlockList(this.GetBlobBlocksOrdered(blockIDs));
         }
 
-        public async Task AppendFileAsync(string path, byte[] data)
+        public async Task AppendFileAsync(string path, byte[] data, int chunkID = -1)
         {
             if (data == null || data.Length <= 0)
                 return;

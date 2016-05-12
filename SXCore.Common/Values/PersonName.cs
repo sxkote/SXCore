@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SXCore.Common.Values
 {
@@ -40,20 +36,13 @@ namespace SXCore.Common.Values
 
         public static bool operator ==(PersonName name1, PersonName name2)
         {
-            if ((object)name1 == null && (object)name2 == null)
-            {
+            if (ReferenceEquals(name1, null) || ReferenceEquals(name2, null))
+                return false;
+
+            if (ReferenceEquals(name1, name2))
                 return true;
-            }
 
-            if ((object)name1 == null || (object)name2 == null)
-            {
-                return false;
-            }
-
-            if (!name1.Last.Equals(name2.Last) || !name1.First.Equals(name2.First))
-                return false;
-
-            return true;
+            return name1.Last.Equals(name2.Last) && name1.First.Equals(name2.First);
         }
 
         public static bool operator !=(PersonName name1, PersonName name2)
@@ -63,6 +52,15 @@ namespace SXCore.Common.Values
 
         public static implicit operator PersonName(PersonFullName name)
         { return new PersonName(name.First, name.Last); }
+
+        public PersonName Copy()
+        {
+            return new PersonName()
+            {
+                First = this.First,
+                Last = this.Last
+            };
+        }
     }
 
     public class PersonFullName
@@ -71,12 +69,7 @@ namespace SXCore.Common.Values
         public string Last { get; private set; }
         public string Second { get; private set; }
 
-        private PersonFullName()
-        {
-            this.First = "";
-            this.Last = "";
-            this.Second = "";
-        }
+        private PersonFullName() { }
 
         public PersonFullName(string first, string last, string second = "")
         {
@@ -97,20 +90,13 @@ namespace SXCore.Common.Values
 
         public static bool operator ==(PersonFullName name1, PersonFullName name2)
         {
-            if ((object)name1 == null && (object)name2 == null)
-            {
+            if (ReferenceEquals(name1, null) || ReferenceEquals(name2, null))
+                return false;
+
+            if (ReferenceEquals(name1, name2))
                 return true;
-            }
 
-            if ((object)name1 == null || (object)name2 == null)
-            {
-                return false;
-            }
-
-            if (!name1.Last.Equals(name2.Last) || !name1.First.Equals(name2.First) || !name1.Second.Equals(name2.Second))
-                return false;
-
-            return true;
+            return name1.Last.Equals(name2.Last) && name1.First.Equals(name2.First) && name1.Second.Equals(name2.Second);
         }
 
         public static bool operator !=(PersonFullName name1, PersonFullName name2)
@@ -123,6 +109,15 @@ namespace SXCore.Common.Values
             return this.ToString().GetHashCode();
         }
 
+        public PersonFullName Copy()
+        {
+            return new PersonFullName()
+            {
+                First = this.First,
+                Last = this.Last,
+                Second = this.Second
+            };
+        }
     }
 
     public class PersonTotalName

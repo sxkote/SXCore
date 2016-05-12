@@ -2,17 +2,14 @@
 using SXCore.Infrastructure.Values;
 using SXCore.Common.Services;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SXCore.Infrastructure.Services.FileStorage
 {
     public class LocalFileStorageService : IFileStorageService
     {
-        protected string  _root = "";
+        protected string _root = "";
 
         public LocalFileStorageService()
         {
@@ -33,7 +30,8 @@ namespace SXCore.Infrastructure.Services.FileStorage
         }
 
         public LocalFileStorageService(string config)
-            : this(Newtonsoft.Json.JsonConvert.DeserializeObject<FileStorageConfig>(config)) { }
+            : this(Newtonsoft.Json.JsonConvert.DeserializeObject<FileStorageConfig>(config))
+        { }
 
         #region Functions
         protected virtual string GetFullPath(string path)
@@ -64,9 +62,9 @@ namespace SXCore.Infrastructure.Services.FileStorage
             var fileInfo = new FileInfo(fullPath);
 
             byte[] result = new byte[fileInfo.Length];
-            using (var fs = File.OpenRead(path))
+            using (var fs = File.OpenRead(fullPath))
                 await fs.ReadAsync(result, 0, result.Length);
-            
+
             return result;
         }
         #endregion
@@ -76,7 +74,6 @@ namespace SXCore.Infrastructure.Services.FileStorage
         {
             var task = Task.Run(() => this.ReadDataFromFileAsync(path));
             task.ConfigureAwait(false);
-            task.Wait();
             return task.Result;
         }
 
@@ -97,7 +94,7 @@ namespace SXCore.Infrastructure.Services.FileStorage
             await this.SaveDataToFileAsync(path, data, FileMode.OpenOrCreate);
         }
 
-        public void AppendFile(string path, byte[] data)
+        public void AppendFile(string path, byte[] data, int chunkID = -1)
         {
             if (data == null || data.Length <= 0)
                 return;
@@ -107,7 +104,7 @@ namespace SXCore.Infrastructure.Services.FileStorage
             task.Wait();
         }
 
-        public async Task AppendFileAsync(string path, byte[] data)
+        public async Task AppendFileAsync(string path, byte[] data, int chunkID = -1)
         {
             if (data == null || data.Length <= 0)
                 return;
@@ -118,7 +115,7 @@ namespace SXCore.Infrastructure.Services.FileStorage
         public void CopyFile(string sourcePath, string destinationPath, bool deleteSource = false)
         {
             var sourceFullPath = this.GetFullPath(sourcePath);
-            if (File.Exists(sourceFullPath))
+            if (!File.Exists(sourceFullPath))
                 return;
 
             var destFullPath = this.GetFullPath(destinationPath);

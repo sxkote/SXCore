@@ -11,8 +11,8 @@ namespace SXCore.Common.Contracts
         void SaveFile(string path, byte[] data);
         Task SaveFileAsync(string path, byte[] data);
 
-        void AppendFile(string path, byte[] data);
-        Task AppendFileAsync(string path, byte[] data);
+        void AppendFile(string path, byte[] data, int chunkID = -1);
+        Task AppendFileAsync(string path, byte[] data, int chunkID = -1);
 
         void CopyFile(string sourcePath, string destinationPath, bool deleteSource = false);
 

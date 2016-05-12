@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,19 +22,45 @@ namespace SXCore.Common.Services
         static public DateTimeOffset Now
         { get { return TimeZoneInfo.ConvertTime(DateTimeOffset.Now, TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time")); } }
 
-        static public string HashPassword(string password)
+        static public StringComparison StringComparison
+        { get { return System.StringComparison.OrdinalIgnoreCase; } }
+
+        static public string HashPassword(string password, int level = 10)
         {
-            return GetMD5(password);
+            return BCrypt.Net.BCrypt.HashPassword(password, level);
         }
 
         static public bool VerifyPassword(string password, string hash)
         {
-            return hash.Equals(GetMD5(password), StringComparison.InvariantCultureIgnoreCase);
+            return BCrypt.Net.BCrypt.Verify(password, hash);
         }
 
-        static public string GenerateCode(string prefix = "", int length = 8)
+        static public string GeneratePassword(int length = 8, bool capitalize = true)
+        { return CoderService.GenerateCode(length, capitalize: capitalize); }
+
+        static public string GenerateCode(int length = 6, int baseLength = CoderService.MaxBaseLength, bool capitalize = false)
+        { return CoderService.GenerateCode(length, baseLength, capitalize); }
+
+        //static public string GenerateCode(string prefix = "", byte subscriptionID = 0, int length = 6)
+        //{
+        //    var service = new CoderService(36);
+
+        //    string codePrefix = String.IsNullOrEmpty(prefix) ? "" : (prefix.TrimEnd('-') + "-");
+
+        //    string codeSubscr = subscriptionID <= 0 ? "" : (subscriptionID.ToString() + "-");
+        //    if (String.IsNullOrEmpty(codePrefix) && !String.IsNullOrEmpty(codeSubscr))
+        //        codeSubscr = "S" + codeSubscr;
+
+        //    string codeDate = service.Encode(CommonService.Now.DateTime);
+
+        //    string codeRandom = service.Generate(length <= 0 ? 6 : length);
+
+        //    return String.Format("{0}{1}{2}-{3}", codePrefix, codeSubscr, codeDate, codeRandom);
+        //}
+
+        static public string GenerateEntityCode(string prefix = "", int length = 8)
         {
-            var service = new Coder(36);
+            var service = new CoderService(36);
 
             string codePrefix = String.IsNullOrEmpty(prefix) ? "" : (prefix.TrimEnd('-') + "-");
 
@@ -45,11 +69,6 @@ namespace SXCore.Common.Services
             string codeRandom = service.Generate(length <= 0 ? 8 : length);
 
             return String.Format("{0}{1}-{2}", codePrefix, codeDate, codeRandom);
-        }
-
-        static public string GeneratePassword(bool capitalize = true)
-        {
-            return Coder.Generate(8, Coder.MaxRadixLength, capitalize);
         }
 
         static public string GetMD5(byte[] data)

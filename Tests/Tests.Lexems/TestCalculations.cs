@@ -62,6 +62,8 @@ namespace Tests.Lexems
             Assert.AreEqual(11, LexemExpression.Calculate("a = 10 + v1", _environment).Value);
 
             Assert.AreEqual(4, LexemExpression.Calculate("b = a > 10 ? v2*2 : 0", _environment).Value);
+
+            Assert.AreEqual(4, _environment["b"].Value);
         }
     }
 }

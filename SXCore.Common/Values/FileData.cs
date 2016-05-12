@@ -1,4 +1,6 @@
-﻿namespace SXCore.Common.Values
+﻿using System.Text;
+
+namespace SXCore.Common.Values
 {
     public class FileData
     {
@@ -30,7 +32,7 @@
             using (var md5 = System.Security.Cryptography.MD5.Create())
                 hash = md5.ComputeHash(data);
 
-            var sBuilder = new System.Text.StringBuilder();
+            StringBuilder sBuilder = new StringBuilder();
             for (int i = 0; i < hash.Length; i++)
                 sBuilder.Append(hash[i].ToString("x2"));
 

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SXCore.Common.Exceptions
 {
@@ -30,7 +26,8 @@ namespace SXCore.Common.Exceptions
         }
 
         public CustomException(string message)
-            : this() { this.Template = message; }
+            : this()
+        { this.Template = message; }
 
         public CustomException(string identifier, string template, params object[] args)
             : this()
@@ -47,22 +44,30 @@ namespace SXCore.Common.Exceptions
     public class CustomNotFoundException : CustomException
     {
         public CustomNotFoundException(string title = "")
-            : base("Not Found", "Запрошенный объект {0} не найден!", title) { }
+            : base("Not Found", "Запрошенный объект {0} не найден!", title)
+        { }
 
         public CustomNotFoundException(string type, object key)
-            : base("Not Found", "Запрошенный объект {0}:{1} не найден!", type, key) { }
+            : base("Not Found", "Запрошенный объект {0}:{1} не найден!", type, key)
+        { }
     }
 
-    public class CustomAuthorizationException : CustomException
+    public class CustomAuthenticationException : CustomException
     {
-        public CustomAuthorizationException(string login = "")
-            : base("Authorization", "Пользователь {0} не авторизован! Проверьте логин и/или пароль!", login) { }
+        public CustomAuthenticationException()
+            : base("Authorization", "Ошибка авторизации")
+        { }
+
+        public CustomAuthenticationException(string login)
+            : base("Authorization", "Пользователь {0} не авторизован! Проверьте логин и/или пароль!", login)
+        { }
     }
 
     public class CustomPermissionsException : CustomException
     {
-        public CustomPermissionsException(string permission = "")
-            : base("Permissions", "Для запрошенного действия не достаточно прав!", permission) { }
+        public CustomPermissionsException()
+            : base("Permissions", "Не достаточно прав для запрошенного действия!")
+        { }
     }
 
     public class CustomOperationException : CustomException
@@ -78,16 +83,19 @@ namespace SXCore.Common.Exceptions
     public class CustomSerializationException : CustomException
     {
         public CustomSerializationException()
-            : base("Serialization", "Ошибка сериализации объекта") { }
+            : base("Serialization", "Ошибка сериализации объекта")
+        { }
 
         public CustomSerializationException(string typeTitle)
-            : base("Serialization", "Ошибка сериализации объекта {0}", typeTitle) { }
+            : base("Serialization", "Ошибка сериализации объекта {0}", typeTitle)
+        { }
     }
 
     public class CustomArgumentException : CustomException
     {
         public CustomArgumentException(string param)
-            : base("Argument", "Параметр {0} указан не верно!", param) { }
+            : base("Argument", "Параметр {0} указан не верно!", param)
+        { }
 
     }
 }

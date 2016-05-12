@@ -1,6 +1,6 @@
 ﻿namespace SXCore.Common.Interfaces
 {
-    public interface IOwnered
+    public interface IOwner
     {
         long OwnerID { get; }
         int OwnerTypeID { get; }

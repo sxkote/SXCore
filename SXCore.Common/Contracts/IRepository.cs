@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SXCore.Common.Contracts
 {
@@ -11,6 +7,8 @@ namespace SXCore.Common.Contracts
     public interface IRepository<T> : IRepository
          where T : class
     {
+        bool AutoSave { get; }
+
         IEnumerable<T> GetAll();
 
         T Get(object id);

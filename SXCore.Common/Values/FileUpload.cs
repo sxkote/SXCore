@@ -1,20 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SXCore.Common.Values
 {
     public class FileUpload
     {
-        private string _uid;
+        private string _uploadID;
+        private int _chunkID;
+
         private FileName _filename;
         private byte[] _data;
         private long _totalSize;
 
-        public string UID
-        { get { return _uid; } }
+        public string UploadID
+        { get { return _uploadID; } }
+
+        public int ChunkID
+        { get { return _chunkID; } }
 
         public FileName FileName
         { get { return _filename; } }
@@ -42,20 +43,24 @@ namespace SXCore.Common.Values
             if (file == null)
                 throw new ArgumentNullException("FileData");
 
-            _uid = Guid.NewGuid().ToString();
+            _uploadID = Guid.NewGuid().ToString();
 
             _filename = file.FileName;
             _data = file.Data;
             _totalSize = file.Size;
         }
 
-        public FileUpload(string uid, FileName filename, byte[] data = null, long totalSize = 0)
+        public FileUpload(string uploadID, FileName filename, byte[] data = null, long totalSize = 0, int chunkID = -1)
         {
-            _uid = String.IsNullOrEmpty(uid) ? Guid.NewGuid().ToString() : uid;
+            _uploadID = String.IsNullOrEmpty(uploadID) ? Guid.NewGuid().ToString() : uploadID;
+            _chunkID = chunkID;
 
             _filename = filename;
             _data = data;
             _totalSize = totalSize;
         }
+
+        static public implicit operator FileUpload(FileData file)
+        { return new FileUpload(file); }
     }
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SXCore.Common.Values
+﻿namespace SXCore.Common.Values
 {
     public class Message
     {
@@ -20,7 +14,7 @@ namespace SXCore.Common.Values
             _text = text;
         }
 
-        public Message FillTemplate(ValuesCollection collection)
+        public Message FillTemplate(ParamValueCollection collection)
         {
             var subject = collection.Replace(this.Subject);
             var text = collection.Replace(this.Text);

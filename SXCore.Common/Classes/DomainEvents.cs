@@ -3,22 +3,20 @@ using SXCore.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SXCore.Common.Classes
 {
     public static class DomainEvents
     {
         //so that each thread has its own callbacks
-        [ThreadStatic] 
+        [ThreadStatic]
         private static List<Delegate> actions;
 
         // Container with Dependency Injections
         public static IDependencyResolver Container { get; set; }
 
         // Registers a callback for the given domain event
-        public static void Register<T>(Action<T> callback) where T:IDomainEvent
+        public static void Register<T>(Action<T> callback) where T : IDomainEvent
         {
             if (actions == null)
                 actions = new List<Delegate>();
@@ -33,7 +31,7 @@ namespace SXCore.Common.Classes
         }
 
         // Raises the given domain event
-        public static void Raise<T>(T args) where T:IDomainEvent
+        public static void Raise<T>(T args) where T : IDomainEvent
         {
             if (Container != null)
             {

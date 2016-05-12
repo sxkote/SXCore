@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Net.Mime;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SXCore.Common.Services
 {
@@ -76,10 +72,12 @@ namespace SXCore.Common.Services
         }
 
         public ImagerResizeParams(string type, Size size, Color background)
-            : this(GetType(type), size, background) { }
+            : this(GetType(type), size, background)
+        { }
 
         public ImagerResizeParams(string type, Size size, string background)
-            : this(GetType(type), size, GetColor(background)) { }
+            : this(GetType(type), size, GetColor(background))
+        { }
         #endregion
 
         #region Statics
@@ -269,6 +267,7 @@ namespace SXCore.Common.Services
                     ms.Position = 0;
                     this.Image = Image.FromStream(ms);
                     this._properties = this.Image.PropertyItems;
+                    ms.Close();
                 }
             }
 

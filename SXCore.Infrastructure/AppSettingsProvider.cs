@@ -1,6 +1,6 @@
 ﻿using SXCore.Common.Contracts;
 
-namespace SXCore.Infrastructure.Services
+namespace SXCore.Infrastructure
 {
     public class AppSettingsProvider : ISettingsProvider
     {

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SXCore.Common.Classes
@@ -20,27 +19,32 @@ namespace SXCore.Common.Classes
         private Expression<Func<T, bool>> _condition;
         private Func<IQueryable<T>, IOrderedQueryable<T>> _order_by;
 
+        //private Func<T, object> _projection;
+
         private int? _skipCount;
         private int? _takeCount;
         #endregion
 
         #region Properties
-        public IQuerableRepository<T> Repository 
+        public IQuerableRepository<T> Repository
         { get { return _repository; } }
 
-        public List<Expression<Func<T, object>>> Includes 
+        public List<Expression<Func<T, object>>> Includes
         { get { return _includes; } }
 
-        public Expression<Func<T, bool>> Condition 
+        public Expression<Func<T, bool>> Condition
         { get { return _condition; } }
 
-        public Func<IQueryable<T>, IOrderedQueryable<T>> Order 
+        public Func<IQueryable<T>, IOrderedQueryable<T>> Order
         { get { return _order_by; } }
 
-        public int? SkipCount 
+        //public Func<T, object> Projection 
+        //{ get { return _projection; } }
+
+        public int? SkipCount
         { get { return _skipCount; } }
 
-        public int? TakeCount 
+        public int? TakeCount
         { get { return _takeCount; } }
         #endregion
 
@@ -70,6 +74,12 @@ namespace SXCore.Common.Classes
             _includes.Add(expression);
             return this;
         }
+
+        //public IRepositoryQuery<T> Project(Func<T, object> projection)
+        //{
+        //    _projection = projection;
+        //    return this;
+        //}
 
         public IRepositoryQuery<T> Skip(int skip)
         {

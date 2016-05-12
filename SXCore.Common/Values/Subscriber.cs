@@ -1,9 +1,5 @@
 ﻿using SXCore.Common.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SXCore.Common.Values
 {
@@ -44,5 +40,16 @@ namespace SXCore.Common.Values
             _managerID = provider.ManagerID;
             _personID = provider.PersonID;
         }
+    }
+
+    public class Subscriber : Subscriber<long, long, long>, ISubscriber<long, long, long>
+    {
+        public Subscriber(long subscriptionID, long personID, long managerID)
+            : base(subscriptionID, personID, managerID)
+        { }
+
+        public Subscriber(ISubscriber provider)
+            : base(provider)
+        { }
     }
 }

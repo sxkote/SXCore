@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SXCore.Common.Contracts
+﻿namespace SXCore.Common.Contracts
 {
     public interface IDependencyRegistrator
     {
-        void RegisterType<TService, TInterface>(SXCore.Common.Enums.DependencyScope scope = SXCore.Common.Enums.DependencyScope.Default) where TService : TInterface;
+        void RegisterType<TService, TInterface>(Enums.DependencyScope scope = Enums.DependencyScope.Default) where TService : TInterface;
+        void RegisterInstance<TInterface>(TInterface service) where TInterface : class;
     }
 }

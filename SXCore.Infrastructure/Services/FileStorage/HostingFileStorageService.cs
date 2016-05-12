@@ -1,12 +1,5 @@
-﻿using SXCore.Common.Contracts;
-using SXCore.Infrastructure.Values;
-using SXCore.Common.Services;
+﻿using SXCore.Infrastructure.Values;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SXCore.Infrastructure.Services.FileStorage
 {
@@ -31,7 +24,8 @@ namespace SXCore.Infrastructure.Services.FileStorage
         }
 
         public HostingFileStorageService(string config)
-            : this(Newtonsoft.Json.JsonConvert.DeserializeObject<FileStorageConfig>(config)) { }
+            : this(Newtonsoft.Json.JsonConvert.DeserializeObject<FileStorageConfig>(config))
+        { }
 
         #region Functions
         protected override string GetFullPath(string path)

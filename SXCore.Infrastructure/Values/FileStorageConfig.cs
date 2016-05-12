@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SXCore.Infrastructure.Values
+﻿namespace SXCore.Infrastructure.Values
 {
     public class FileStorageConfig
     {

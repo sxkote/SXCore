@@ -30,6 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BCrypt.Net, Version=0.1.5073.29922, Culture=neutral, PublicKeyToken=6bcd409ee6bc9292, processorArchitecture=MSIL">
+      <HintPath>..\packages\BCrypt-Official.0.1.109\lib\BCrypt.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -43,28 +51,34 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\DomainEvents.cs" />
+    <Compile Include="Classes\JsonCreationConverter.cs" />
     <Compile Include="Classes\RepositoryQuery.cs" />
+    <Compile Include="Contracts\IAuthenticationProvider.cs" />
+    <Compile Include="Contracts\ICacheProvider.cs" />
     <Compile Include="Contracts\IDependencyRegistrator.cs" />
     <Compile Include="Contracts\IDependencyResolver.cs" />
     <Compile Include="Contracts\IFileStorageService.cs" />
+    <Compile Include="Contracts\IInfrastructureProvider.cs" />
     <Compile Include="Contracts\INotificationService.cs" />
     <Compile Include="Contracts\IQuerableRepository.cs" />
     <Compile Include="Contracts\IRepository.cs" />
     <Compile Include="Contracts\ISettingsProvider.cs" />
+    <Compile Include="Contracts\ITokenProvider.cs" />
     <Compile Include="Contracts\IUnitOfWork.cs" />
     <Compile Include="Entities\Identifiable.cs" />
-    <Compile Include="Entities\Subscriptioned.cs" />
     <Compile Include="Enums\DependencyScope.cs" />
-    <Compile Include="Enums\EntityDbState.cs" />
+    <Compile Include="Enums\DbState.cs" />
     <Compile Include="Enums\Gender.cs" />
     <Compile Include="Enums\ObjectState.cs" />
+    <Compile Include="Enums\ParamType.cs" />
     <Compile Include="Exceptions\CustomExceptions.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Interfaces\ICoded.cs" />
     <Compile Include="Interfaces\IDomainEvents.cs" />
     <Compile Include="Interfaces\IIdentifiable.cs" />
     <Compile Include="Interfaces\IOwnered.cs" />
     <Compile Include="Interfaces\IRepositoryQuery.cs" />
-    <Compile Include="Interfaces\IStatedDbEntity.cs" />
+    <Compile Include="Interfaces\IDbEntity.cs" />
     <Compile Include="Interfaces\IStatedObject.cs" />
     <Compile Include="Interfaces\ISubscriber.cs" />
     <Compile Include="Interfaces\ISubscriptioned.cs" />
@@ -76,14 +90,16 @@
     <Compile Include="Values\FileData.cs" />
     <Compile Include="Values\FileName.cs" />
     <Compile Include="Values\FileUpload.cs" />
-    <Compile Include="Values\InputOrder.cs" />
-    <Compile Include="Values\InputSequence.cs" />
+    <Compile Include="Values\Inputs.cs" />
     <Compile Include="Values\Message.cs" />
     <Compile Include="Values\Owner.cs" />
+    <Compile Include="Values\ParamValue.cs" />
     <Compile Include="Values\PersonName.cs" />
     <Compile Include="Values\Subscriber.cs" />
     <Compile Include="Values\Token.cs" />
-    <Compile Include="Values\ValueItem.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

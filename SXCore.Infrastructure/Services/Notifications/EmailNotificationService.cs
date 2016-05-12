@@ -4,15 +4,12 @@ using SXCore.Common.Values;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SXCore.Infrastructure.Services.Notifications
 {
-    public sealed class EmailNotificationService : INotificationService
+    public sealed class EmailNotificationService : INotificationService, IEmailNotificationService
     {
         private EmailServerConfig _config;
 
@@ -50,18 +47,35 @@ namespace SXCore.Infrastructure.Services.Notifications
             }
         }
 
+        //public EmailNotificationService(string server, int port, string login, string password, string senderEmail, string senderName, bool ssl = true)
+        //{
+        //    _config = new EmailServerConfig()
+        //    {
+        //        Server = server,
+        //        Port = port,
+        //        SSL = ssl,
+
+        //        Login = login,
+        //        Password = password,
+
+        //        SenderEmail = senderEmail,
+        //        SenderName = senderName
+        //    };
+        //}
+
         public EmailNotificationService(EmailServerConfig config)
         { _config = config; }
 
         public EmailNotificationService(string config)
-            : this(Newtonsoft.Json.JsonConvert.DeserializeObject<EmailServerConfig>(config)) { }
+            : this(Newtonsoft.Json.JsonConvert.DeserializeObject<EmailServerConfig>(config))
+        { }
 
-        public void SendEmail(string toEmail, string subject, string body, ICollection<FileData> files = null)
+        public void SendEmail(string toEmail, string subject, string text, ICollection<FileData> files = null)
         {
             if (_config == null)
                 return;
 
-            var message = new MailMessage(_config.SenderEmail, toEmail, subject, body)
+            var message = new MailMessage(_config.SenderEmail, toEmail, subject, text)
             {
                 Sender = this.Sender
             };

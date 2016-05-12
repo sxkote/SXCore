@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SXCore.Common.Interfaces
+﻿namespace SXCore.Common.Interfaces
 {
     public interface ISubscriber<S, P, M>
     {
@@ -12,4 +6,6 @@ namespace SXCore.Common.Interfaces
         P PersonID { get; }
         M ManagerID { get; }
     }
+
+    public interface ISubscriber : ISubscriber<long, long, long> { }
 }

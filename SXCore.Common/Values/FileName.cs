@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SXCore.Common.Values
+﻿namespace SXCore.Common.Values
 {
     public class FileName
     {
@@ -18,7 +12,7 @@ namespace SXCore.Common.Values
             private set { _name = value; }
         }
 
-        private FileName(){ }
+        private FileName() { }
 
         public FileName(string name)
         { _name = name; }
