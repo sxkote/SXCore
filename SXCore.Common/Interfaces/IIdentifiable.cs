@@ -9,4 +9,8 @@
         T ID { get; }
     }
 
+    public interface IIdentifiable : IIdentifiable<long>
+    {
+
+    }
 }

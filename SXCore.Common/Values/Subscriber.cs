@@ -5,9 +5,9 @@ namespace SXCore.Common.Values
 {
     public class Subscriber<S, P, M> : ISubscriber<S, P, M>
     {
-        private S _subscriptionID;
-        private P _personID;
-        private M _managerID;
+        protected S _subscriptionID;
+        protected P _personID;
+        protected M _managerID;
 
         public S SubscriptionID
         {

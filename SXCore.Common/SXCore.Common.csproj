@@ -55,6 +55,7 @@
     <Compile Include="Classes\RepositoryQuery.cs" />
     <Compile Include="Contracts\IAuthenticationProvider.cs" />
     <Compile Include="Contracts\ICacheProvider.cs" />
+    <Compile Include="Contracts\ICoreRepository.cs" />
     <Compile Include="Contracts\IDependencyRegistrator.cs" />
     <Compile Include="Contracts\IDependencyResolver.cs" />
     <Compile Include="Contracts\IFileStorageService.cs" />
@@ -65,7 +66,11 @@
     <Compile Include="Contracts\ISettingsProvider.cs" />
     <Compile Include="Contracts\ITokenProvider.cs" />
     <Compile Include="Contracts\IUnitOfWork.cs" />
+    <Compile Include="Entities\Avatar.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\FileBlob.cs" />
     <Compile Include="Entities\Identifiable.cs" />
+    <Compile Include="Entities\Types.cs" />
     <Compile Include="Enums\DependencyScope.cs" />
     <Compile Include="Enums\DbState.cs" />
     <Compile Include="Enums\Gender.cs" />
@@ -75,6 +80,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Interfaces\ICoded.cs" />
     <Compile Include="Interfaces\IDomainEvents.cs" />
+    <Compile Include="Interfaces\IEntity.cs" />
     <Compile Include="Interfaces\IIdentifiable.cs" />
     <Compile Include="Interfaces\IOwnered.cs" />
     <Compile Include="Interfaces\IRepositoryQuery.cs" />
@@ -94,6 +100,7 @@
     <Compile Include="Values\Message.cs" />
     <Compile Include="Values\Owner.cs" />
     <Compile Include="Values\ParamValue.cs" />
+    <Compile Include="Values\Period.cs" />
     <Compile Include="Values\PersonName.cs" />
     <Compile Include="Values\Subscriber.cs" />
     <Compile Include="Values\Token.cs" />
