@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SXCore.Common.Interfaces;
+using System.Collections.Generic;
 
 namespace SXCore.Common.Contracts
 {
@@ -23,4 +24,8 @@ namespace SXCore.Common.Contracts
 
         void Delete(object id);
     }
+
+    public interface ICoreRepository<T> : IRepository<T>, IQuerableRepository<T>
+        where T : class, IEntity
+    { }
 }

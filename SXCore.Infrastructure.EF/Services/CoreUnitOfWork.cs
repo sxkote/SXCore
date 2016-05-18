@@ -1,6 +1,7 @@
 ﻿using SXCore.Common.Contracts;
 using SXCore.Common.Entities;
 using SXCore.Common.Interfaces;
+using SXCore.Common.Services;
 using SXCore.Infrastructure.EF.Data;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SXCore.Infrastructure.EF.Services
 {
-    public abstract class KernelUnitOfWork<TContext> : IUnitOfWork
+    public abstract class CoreUnitOfWork<TContext> : ICoreUnitOfWork
      where TContext : CoreDbContext, new()
     {
         protected TContext _dbContext;
@@ -18,7 +19,7 @@ namespace SXCore.Infrastructure.EF.Services
         protected TContext DbContext
         { get { return _dbContext; } }
 
-        public KernelUnitOfWork()
+        public CoreUnitOfWork()
         {
             _dbContext = new TContext();
         }
@@ -35,7 +36,7 @@ namespace SXCore.Infrastructure.EF.Services
 
         public T FindByCode<T>(string code) where T : class, ICoded
         {
-            return this.DbContext.Set<T>().SingleOrDefault(b => b.Code.Equals(code, StringComparison.OrdinalIgnoreCase));
+            return this.DbContext.Set<T>().SingleOrDefault(b => b.Code.Equals(code, CommonService.StringComparison));
         }
 
         public T Find<T>(object key) where T : class, ICoded

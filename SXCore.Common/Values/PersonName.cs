@@ -21,7 +21,7 @@ namespace SXCore.Common.Values
 
         public override string ToString()
         {
-            return String.Format("{0} {1}", this.First, this.Last);
+            return $"{this.First} {this.Last}";
         }
 
         public override int GetHashCode()
@@ -80,7 +80,7 @@ namespace SXCore.Common.Values
 
         public override string ToString()
         {
-            return String.Format("{0} {1} {2}", this.First, this.Second, this.Last);
+            return $"{this.First} {this.Second} {this.Last}";
         }
 
         public override bool Equals(object name)
@@ -145,7 +145,8 @@ namespace SXCore.Common.Values
 
         public override string ToString()
         {
-            return String.Format("{0} {1} {2}{3}", this.First, this.Second, this.Last, String.IsNullOrEmpty(this.Maiden) ? "" : String.Format(" ({0})", this.Maiden)).Trim();
+            var maidenValue = String.IsNullOrEmpty(this.Maiden) ? "" : $"({this.Maiden})";
+            return $"{this.First} {this.Second} {this.Last} {maidenValue}".Trim();
         }
 
         public override bool Equals(object name)

@@ -1,23 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SXCore.Common.Values
 {
     public class Period
     {
-        private DateTime? _begin;
-        private DateTime? _end;
+        public DateTimeOffset? Begin { get; private set; }
+        public DateTimeOffset? End { get; private set; }
 
-        public DateTime? Begin { get { return _begin; } }
-        public DateTime? End { get { return _end; } }
-
-        public Period(DateTime? begin, DateTime? end)
+        public Period(DateTimeOffset? begin, DateTimeOffset? end)
         {
-            _begin = begin;
-            _end = end;
+            this.Begin = begin;
+            this.End = end;
         }
     }
 }

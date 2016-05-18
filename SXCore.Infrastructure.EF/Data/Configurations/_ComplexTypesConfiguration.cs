@@ -45,4 +45,12 @@ namespace SXCore.Infrastructure.EF.Data.Configurations
         }
     }
 
+    public class PeriodComplexTypeConfiguration : ComplexTypeConfiguration<Period>
+    {
+        public PeriodComplexTypeConfiguration()
+        {
+            this.Property(p => p.Begin).HasColumnName("PeriodBegin");
+            this.Property(p => p.End).HasColumnName("PeriodEnd");
+        }
+    }
 }
