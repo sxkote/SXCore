@@ -118,6 +118,14 @@ namespace SXCore.Common.Values
                 Second = this.Second
             };
         }
+
+        static public implicit operator PersonName(PersonFullName name)
+        {
+            if (name == null)
+                return null;
+
+            return new PersonName(name.First, name.Last);
+        }
     }
 
     public class PersonTotalName
@@ -182,5 +190,20 @@ namespace SXCore.Common.Values
             return this.ToString().GetHashCode();
         }
 
+        static public implicit operator PersonFullName(PersonTotalName name)
+        {
+            if (name == null)
+                return null;
+
+            return new PersonFullName(name.First, name.Last, name.Second);
+        }
+
+        static public implicit operator PersonName(PersonTotalName name)
+        {
+            if (name == null)
+                return null;
+
+            return new PersonName(name.First, name.Last);
+        }
     }
 }

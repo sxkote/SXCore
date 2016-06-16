@@ -48,7 +48,7 @@ namespace SXCore.WebApi
         {
 
             //_log = LogManager.GetLogger(GetType().FullName);
-
+            
         }
 
         protected HttpResponseMessage ReturnFile(FileData file)

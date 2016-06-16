@@ -15,15 +15,23 @@ namespace SXCore.Common.Entities
         public const int Quality = 90;
 
         public string Code { get; private set; }
+        public string Value { get; private set; }
 
         private Avatar()
         {
             this.Code = Guid.NewGuid().ToString();
+            this.Value = "";
         }
 
-        public Avatar(string code)
+        public Avatar(string code, string value = "")
         {
             this.Code = code;
+            this.Value = value ?? "";
+        }
+
+        public void ChangeValue(string value)
+        {
+            this.Value = value ?? "";
         }
 
         public override string ToString()
@@ -39,21 +47,21 @@ namespace SXCore.Common.Entities
         static public implicit operator string(Avatar avatar)
         { return avatar == null ? null : avatar.Code; }
 
-        static public Avatar CreateAvatar()
+        static public Avatar CreateAvatar(string value = "")
         {
-            return new Avatar();
+            return new Avatar() { Value = value ?? "" };
         }
 
-        static public FileData MakeAvatarFile(byte[] data, int maxSize = Avatar.MaxSize)
+        static public FileData MakeAvatarFile(byte[] data, int maxSize = Avatar.MaxSize, int quality = Avatar.Quality, string avatarFileName = Avatar.FileName, string mimeType = Avatar.MimeType)
         {
             if (data == null || data.Length <= 0)
                 return null;
 
             byte[] avatarData = Imager.Create(data)
-                                      .Modify(ImagerResizeType.Crop, maxSize)
-                                      .Save(Avatar.Quality, Avatar.MimeType);
+                                    .Modify(ImagerResizeType.Crop, maxSize)
+                                    .Save(quality, mimeType);
 
-            return new FileData(Avatar.FileName, avatarData);
+            return new FileData(avatarFileName, avatarData);
         }
 
         static public string GetAvatarPath(string code)

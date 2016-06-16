@@ -41,9 +41,22 @@ namespace SXCore.WebApi.Attributes
                 context.Response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
             }
 
-            context.Response.Content = new StringContent(context.Exception.Message);
+            context.Response.Content = new StringContent(GetExceptionMessage(context.Exception));
 
             //context.Response.Content = new ObjectContent<ErrorResponse>(new ErrorResponse(context.Exception), GlobalConfiguration.Configuration.Formatters.JsonFormatter);
+        }
+
+        protected string GetExceptionMessage(Exception ex)
+        {
+            if (ex == null)
+                return "";
+
+            var result = ex.Message;
+
+            if (ex.InnerException != null)
+                result += Environment.NewLine + Environment.NewLine + "---------------------------------------------" + Environment.NewLine + GetExceptionMessage(ex.InnerException);
+
+            return result;
         }
     }
 

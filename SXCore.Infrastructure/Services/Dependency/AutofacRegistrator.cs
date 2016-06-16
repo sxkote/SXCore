@@ -21,6 +21,7 @@ namespace SXCore.Infrastructure.Services.Dependency
         public void RegisterType<TService, TInterface>(DependencyScope scope = DependencyScope.Scope) where TService : TInterface
         {
             var reg = _builder.RegisterType<TService>().As<TInterface>();
+
             switch (scope)
             {
                 case DependencyScope.None:
@@ -36,6 +37,8 @@ namespace SXCore.Infrastructure.Services.Dependency
                     reg.InstancePerRequest();
                     return;
             }
+
+            reg.PropertiesAutowired();
         }
 
         public void RegisterInstance<TInterface>(TInterface service) where TInterface : class

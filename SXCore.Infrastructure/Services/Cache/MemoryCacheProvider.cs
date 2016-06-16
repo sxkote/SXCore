@@ -40,6 +40,9 @@ namespace SXCore.Infrastructure.Services.Cache
 
         public void Set(string key, object value, TimeSpan timespan)
         {
+            if (value == null)
+                this.Remove(key);
+
             if (this.Contains(key))
             {
                 _cache[key] = value;
@@ -53,6 +56,11 @@ namespace SXCore.Infrastructure.Services.Cache
         public void Set(string key, object value)
         {
             this.Set(key, value, _defaultTimeSpan);
+        }
+
+        public void Remove(string key)
+        {
+            _cache.Remove(key);
         }
     }
 }

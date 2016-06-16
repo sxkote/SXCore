@@ -13,5 +13,7 @@ namespace SXCore.Common.Contracts
 
         void Set(string key, object value, TimeSpan timespan);
         void Set(string key, object value);
+
+        void Remove(string key);
     }
 }

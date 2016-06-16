@@ -4,6 +4,7 @@ using SXCore.Common.Exceptions;
 using SXCore.Common.Interfaces;
 using SXCore.Common.Values;
 using System;
+using System.Threading.Tasks;
 
 namespace SXCore.Common.Managers
 {
@@ -205,6 +206,13 @@ namespace SXCore.Common.Managers
 
         protected FileData ReadFile(object key)
         {
+            var task = Task.Run(() => this.ReadFileAsync(key));
+            task.ConfigureAwait(false);
+            return task.Result;
+        }
+
+        protected async Task<FileData> ReadFileAsync(object key)
+        {
             if (this.FileStorageService == null)
                 return null;
 
@@ -214,7 +222,7 @@ namespace SXCore.Common.Managers
 
             var path = this.GetFileBlobPath(blob);
 
-            var data = this.FileStorageService.ReadFile(path);
+            var data = await this.FileStorageService.ReadFileAsync(path);
 
             return new FileData(blob.FileName, data);
         }

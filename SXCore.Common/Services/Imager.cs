@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SXCore.Common.Exceptions;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -108,22 +109,42 @@ namespace SXCore.Common.Services
 
     public class Imager
     {
+        #region Constants
+        public const string DefaultMimeType = "image/png";
+        #endregion
+
         #region Variables
         protected Image _image = null;
         protected PropertyItem[] _properties = null;
+        protected ImageCodecInfo _codec;
         #endregion
 
         #region Properties
         public Image Image
         {
-            get { return this._image; }
-            private set { this._image = value; }
+            get { return _image; }
+            private set { _image = value; }
         }
+
+        protected ImageCodecInfo Codec
+        { get { return _codec; } }
+
+        public ImageFormat ImageFormat
+        { get { return new ImageFormat(this.Codec.FormatID); } }
+
+        public string MimeType
+        { get { return this.Codec.MimeType; } }
         #endregion
 
         #region Constructors
-        private Imager()
+        public Imager(Image image)
         {
+            if (image == null)
+                throw new CustomArgumentException("Imager can't be created with empty image object!");
+
+            _image = image;
+            _properties = image.PropertyItems;
+            _codec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(c => c.FormatID.ToString().Equals(image.RawFormat.Guid.ToString(), StringComparison.InvariantCultureIgnoreCase));
         }
         #endregion
 
@@ -215,64 +236,68 @@ namespace SXCore.Common.Services
             return this.Modify(param);
         }
 
-        public byte[] Save(long quality = 100, string mime_type = "image/jpeg")
+        protected byte[] Save(Action<Stream> writeToStream)
         {
-            //string content_type = ((type == null || type.Trim() == "") ? "image/jpeg" : type);
-
-            // Encoder parameter for image quality
-            EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
-
-            // Jpeg image codec
-            ImageCodecInfo jpegCodec = ImageEncoderInfo(mime_type);
-            if (jpegCodec == null)
-                return null;
-
-            EncoderParameters encoderParams = new EncoderParameters(1);
-            encoderParams.Param[0] = qualityParam;
-
             byte[] data = null;
-            using (MemoryStream ms = new MemoryStream())
+
+            using (var ms = new MemoryStream())
             {
-                this.Image.Save(ms, jpegCodec, encoderParams);
+                writeToStream(ms);
                 ms.Position = 0;
                 data = ms.ToArray();
                 ms.Close();
             }
 
             return data;
+        }
+
+        public byte[] Save(long quality, string mimeType = null)
+        {
+            var encoderMimeType = String.IsNullOrWhiteSpace(mimeType) ? this.MimeType : mimeType;
+
+            var encoder = ImageCodecInfo.GetImageEncoders().FirstOrDefault(c => c.MimeType.Equals(encoderMimeType, StringComparison.InvariantCultureIgnoreCase));
+            if (encoder == null)
+                return null;
+
+            // Encoder parameters for image (quality)
+            var encoderParametres = new EncoderParameters(1);
+            encoderParametres.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+
+            return this.Save(stream => this.Image.Save(stream, encoder, encoderParametres));
         }
 
         public byte[] Save(ImageFormat format)
         {
-            byte[] data = null;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                this.Image.Save(ms, format);
-                ms.Position = 0;
-                data = ms.ToArray();
-                ms.Close();
-            }
-
-            return data;
+            return this.Save(stream => this.Image.Save(stream, format));
         }
 
-        public Imager Load(byte[] data)
+        public byte[] Save()
         {
-            this.Image = null;
-
-            if (data != null)
-            {
-                using (MemoryStream ms = new MemoryStream(data))
-                {
-                    ms.Position = 0;
-                    this.Image = Image.FromStream(ms);
-                    this._properties = this.Image.PropertyItems;
-                    ms.Close();
-                }
-            }
-
-            return this;
+            return this.Save(this.ImageFormat);
         }
+
+        public void Save(string filename, ImageFormat format = null)
+        {
+            this.Image.Save(filename, format == null ? this.ImageFormat : format);
+        }
+
+        //public Imager Load(byte[] data)
+        //{
+        //    this.Image = null;
+
+        //    if (data != null)
+        //    {
+        //        using (MemoryStream ms = new MemoryStream(data))
+        //        {
+        //            ms.Position = 0;
+        //            this.Image = Image.FromStream(ms);
+        //            this._properties = this.Image.PropertyItems;
+        //            ms.Close();
+        //        }
+        //    }
+
+        //    return this;
+        //}
 
         public PropertyItem GetProperty(int id)
         {
@@ -354,6 +379,16 @@ namespace SXCore.Common.Services
             return this;
         }
 
+        public Imager Rotate(bool clockwise)
+        {
+            if (clockwise)
+                this.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            else
+                this.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+
+            return this;
+        }
+
         public Imager RotateCorrection()
         {
             var property = this.GetProperty(0x112);
@@ -381,44 +416,40 @@ namespace SXCore.Common.Services
         #region Statics
         static public Imager Create(Image img)
         {
-            var result = new Imager();
-            result.Image = img;
-            return result;
+            if (img == null)
+                throw new CustomArgumentException("Image can't be empty");
+
+            return new Imager(img);
         }
 
         static public Imager Create(byte[] data)
         {
-            var result = new Imager();
-            result.Load(data);
-            return result;
+            if (data == null)
+                throw new CustomArgumentException("Imager can't be created with empty data");
+
+            using (var ms = new MemoryStream(data))
+                return new Imager(Image.FromStream(ms));
         }
 
         static public Imager Create(string filename)
         {
-            var result = new Imager();
-            result.Image = Image.FromFile(filename);
-            return result;
+            if (!File.Exists(filename))
+                throw new CustomArgumentException($"File {filename} not found to create Imager");
+
+            return new Imager(Image.FromFile(filename));
         }
 
-        static public ImageCodecInfo ImageEncoderInfo(string mime_type)
-        {
-            // Get image codecs for all image formats
-            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
+        //static public ImageCodecInfo GetImageEncoder(string mimeType)
+        //{
+        //    return ImageCodecInfo.GetImageEncoders().FirstOrDefault(c => c.MimeType.Equals(mimeType, StringComparison.InvariantCultureIgnoreCase));
+        //}
 
-            // Find the correct image codec
-            for (int i = 0; i < codecs.Length; i++)
-                if (codecs[i].MimeType.Trim().ToLower() == mime_type.Trim().ToLower())
-                    return codecs[i];
-
-            return null;
-        }
-
-        static public byte[] ResizeImage(byte[] image, int maxSize, int quality = 90, string mime_type = "image/png")
+        static public byte[] ResizeImage(byte[] image, int maxSize, int quality = 90)
         {
             if (image == null || image.Length <= 0)
                 return null;
 
-            return Imager.Create(image).Resize(maxSize).Save(quality, mime_type);
+            return Imager.Create(image).Resize(maxSize).Save(quality);
         }
         #endregion
     }
