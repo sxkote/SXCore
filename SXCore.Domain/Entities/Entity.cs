@@ -1,7 +1,8 @@
-﻿using SXCore.Common.Enums;
+﻿using SXCore.Common.Entities;
+using SXCore.Common.Enums;
 using SXCore.Common.Interfaces;
 
-namespace SXCore.Common.Entities
+namespace SXCore.Domain.Entities
 {
     public abstract class Entity : IdentifiableEntity<long>, IEntity, IDbEntity
     {

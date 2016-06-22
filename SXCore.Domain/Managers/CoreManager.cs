@@ -1,16 +1,21 @@
 ﻿using SXCore.Common.Contracts;
-using SXCore.Common.Entities;
 using SXCore.Common.Exceptions;
 using SXCore.Common.Interfaces;
 using SXCore.Common.Values;
+using SXCore.Domain.Contracts;
+using SXCore.Domain.Entities;
+using SXCore.Domain.Values;
 using System;
 using System.Threading.Tasks;
 
-namespace SXCore.Common.Managers
+namespace SXCore.Domain.Managers
 {
     public abstract class CoreManager<TUnitOfWork> : ICoreManager
        where TUnitOfWork : class, ICoreUnitOfWork
     {
+        public event EventHandler<EventArgument<UploadFileDataInfo>> BeforeFileDataSave;
+        public event EventHandler<EventArgument<UploadChunksDataInfo>> BeforeFileChunksSave;
+
         protected TUnitOfWork _uow;
 
         public TUnitOfWork UnitOfWork { get { return _uow; } }
@@ -138,6 +143,18 @@ namespace SXCore.Common.Managers
             return size > 5 * 1024 * 1024;
         }
 
+        public void OnBeforeFileDataSave(FileData fileData)
+        {
+            if (this.BeforeFileDataSave != null)
+                this.BeforeFileDataSave(this, new EventArgument<UploadFileDataInfo>(new UploadFileDataInfo(fileData)));
+        }
+
+        public void OnBeforeFileChunksSave(string chunksPath, FileUpload fileUpload)
+        {
+            if (this.BeforeFileChunksSave != null)
+                this.BeforeFileChunksSave(this, new EventArgument<UploadChunksDataInfo>(new UploadChunksDataInfo(chunksPath, fileUpload)));
+        }
+
         public FileBlob SaveFile(FileData file, string folder = "")
         {
             if (this.FileStorageService == null)
@@ -145,6 +162,10 @@ namespace SXCore.Common.Managers
 
             if (file == null || file.Data == null || file.Size <= 0)
                 return null;
+
+            //var processed = this.ProcessFileBeforeSave(file);
+
+            this.OnBeforeFileDataSave(file);
 
             // create FileBlob Entity
             var blob = FileBlob.Create(folder, file.FileName, file.Hash, file.Size);
@@ -159,7 +180,7 @@ namespace SXCore.Common.Managers
             return this.UnitOfWork.Create(blob);
         }
 
-        protected FileBlob SaveFile(FileUpload upload, string folder = "")
+        protected FileBlob UploadFile(FileUpload upload, string folder = "")
         {
             if (this.FileStorageService == null)
                 return null;
@@ -178,12 +199,15 @@ namespace SXCore.Common.Managers
             if (upload.Data != null && upload.Data.Length > 0)
                 this.FileStorageService.AppendFile(chunksPath, upload.Data, upload.ChunkID);
 
-            // define uploaded size
-            long chunksSize = this.FileStorageService.SizeOfFile(chunksPath);
-
             // if upload is finished
-            if (upload.TotalSize <= chunksSize)
+            if (upload.TotalSize <= this.FileStorageService.SizeOfFile(chunksPath))
             {
+                // pre Process uploaded file
+                this.OnBeforeFileChunksSave(chunksPath, upload);
+
+                // define uploaded size
+                long chunksSize = this.FileStorageService.SizeOfFile(chunksPath);
+
                 // get newly uploaded hash
                 string hash = "";
                 if (!this.IsFileSizeTooBigToComputeMD5(chunksSize))

@@ -183,7 +183,7 @@ namespace SXCore.Infrastructure.Services.FileStorage
             }
         }
 
-        public string GetFileUrl(string path, int hours = 4)
+        public virtual string GetFileUrl(string path, int hours = 4)
         {
             return this.GetFullPath(path);
         }

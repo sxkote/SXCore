@@ -24,8 +24,4 @@ namespace SXCore.Common.Contracts
 
         void Delete(object id);
     }
-
-    public interface ICoreRepository<T> : IRepository<T>, IQuerableRepository<T>
-        where T : class, IEntity
-    { }
 }

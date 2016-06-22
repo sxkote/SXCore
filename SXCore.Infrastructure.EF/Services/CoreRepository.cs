@@ -1,7 +1,8 @@
 ﻿using SXCore.Common.Classes;
-using SXCore.Common.Contracts;
-using SXCore.Common.Entities;
 using SXCore.Common.Interfaces;
+using SXCore.Domain.Contracts;
+using SXCore.Domain.Entities;
+using SXCore.Domain.Interfaces;
 using SXCore.Infrastructure.EF.Data;
 using System;
 using System.Collections.Generic;
@@ -287,9 +288,9 @@ namespace SXCore.Infrastructure.EF.Services
             if (entity == null)
                 throw new ArgumentNullException("Entity", "Can't delete null Entity to DbContext");
 
-            if (entity is IStatedObject)
+            if (entity is IStatedEntity)
             {
-                (entity as IStatedObject).MarkDeleted();
+                (entity as IStatedEntity).MarkDeleted();
             }
             else
             {

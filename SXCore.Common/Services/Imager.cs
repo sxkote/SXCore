@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SXCore.Common.Services
 {
@@ -437,6 +438,24 @@ namespace SXCore.Common.Services
                 throw new CustomArgumentException($"File {filename} not found to create Imager");
 
             return new Imager(Image.FromFile(filename));
+        }
+
+        static public Imager CreateFromDataUrl(string dataUrl)
+        {
+            if (String.IsNullOrWhiteSpace(dataUrl))
+                throw new CustomArgumentException("Invalid DataUrl specified: input is empty!");
+
+            string dataUrlPattern = "data:(?<mime>.*);base64,(?<data>.*)";
+            Match match = Regex.Match(dataUrl, dataUrlPattern);
+            if (!match.Success)
+                throw new CustomArgumentException($"Invalid DataUrl specified: input doesn't match the pattern '{dataUrlPattern}'");
+
+            var data64 = match.Groups["data"]?.Value;
+            if (String.IsNullOrWhiteSpace(data64))
+                throw new CustomArgumentException($"Invalid DataUrl specified: no base64 data found!");
+
+            using (var ms = new MemoryStream(Convert.FromBase64String(data64)))
+                return new Imager(Image.FromStream(ms));
         }
 
         //static public ImageCodecInfo GetImageEncoder(string mimeType)

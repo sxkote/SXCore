@@ -4,98 +4,91 @@ namespace SXCore.Common.Exceptions
 {
     public class CustomException : ApplicationException
     {
-        public virtual string Template { get; protected set; }
+        public virtual string Identifier { get { return "Error"; } }
 
-        public virtual object[] Arguments { get; set; }
+        protected virtual string DefaultComment { get { return "Exception accured!"; } }
 
-        public virtual string Identifier { get; set; }
+        public virtual string Comment { get; protected set; }
 
         public override string Message
         {
             get
             {
-                return String.Format("{0}: {1}", this.Identifier, this.Arguments == null ? this.Template : String.Format(this.Template, this.Arguments));
+                var identifier = this.Identifier ?? "Error";
+                var comment = String.IsNullOrWhiteSpace(this.Comment) ? this.DefaultComment : this.Comment;
+                return $"{identifier}: {comment}";
             }
         }
 
-        public CustomException()
-        {
-            this.Identifier = "Error";
-            this.Template = "Произошла непредвиденная ошибка!";
-            this.Arguments = null;
-        }
+        public CustomException() { }
 
-        public CustomException(string message)
-            : this()
-        { this.Template = message; }
-
-        public CustomException(string identifier, string template, params object[] args)
-            : this()
-        {
-            this.Identifier = identifier;
-            this.Template = template;
-            this.Arguments = args;
-        }
-
-        //public CustomException(string template, params object[] args)
-        //    : this("Error", template, args) { }
+        public CustomException(string comment)
+        { this.Comment = comment; }
     }
 
     public class CustomNotFoundException : CustomException
     {
-        public CustomNotFoundException(string title = "")
-            : base("Not Found", "Запрошенный объект {0} не найден!", title)
-        { }
+        public override string Identifier { get { return "NotFound"; } }
 
-        public CustomNotFoundException(string type, object key)
-            : base("Not Found", "Запрошенный объект {0}:{1} не найден!", type, key)
+        protected override string DefaultComment { get { return "Object not found!"; } }
+
+        public CustomNotFoundException(string comment = "")
+            : base(comment)
         { }
     }
 
     public class CustomAuthenticationException : CustomException
     {
-        public CustomAuthenticationException()
-            : base("Authorization", "Ошибка авторизации")
-        { }
+        public override string Identifier { get { return "Authentication"; } }
 
-        public CustomAuthenticationException(string login)
-            : base("Authorization", "Пользователь {0} не авторизован! Проверьте логин и/или пароль!", login)
+        protected override string DefaultComment { get { return "User is not authenticated!"; } }
+
+        public CustomAuthenticationException(string comment = "")
+            : base(comment)
         { }
     }
 
     public class CustomPermissionsException : CustomException
     {
-        public CustomPermissionsException()
-            : base("Permissions", "Не достаточно прав для запрошенного действия!")
+        public override string Identifier { get { return "Authentication"; } }
+
+        protected override string DefaultComment { get { return "User has no permissions to perform this action!"; } }
+
+        public CustomPermissionsException(string comment = "")
+            : base(comment)
         { }
     }
 
     public class CustomOperationException : CustomException
     {
-        public CustomOperationException(string operation, string reason = "")
-            : base("Operation", "Операция \"{0}\" не может быть выполнена!", operation, reason)
-        {
-            if (!String.IsNullOrEmpty(reason))
-                this.Template = "Операция \"{0}\" не может быть выполнена, так как {1}";
-        }
+        public override string Identifier { get { return "Authentication"; } }
+
+        protected override string DefaultComment { get { return "Invalid operation!"; } }
+
+        public CustomOperationException(string comment = "")
+            : base(comment)
+        { }
     }
 
     public class CustomSerializationException : CustomException
     {
-        public CustomSerializationException()
-            : base("Serialization", "Ошибка сериализации объекта")
-        { }
+        public override string Identifier { get { return "Serialization"; } }
 
-        public CustomSerializationException(string typeTitle)
-            : base("Serialization", "Ошибка сериализации объекта {0}", typeTitle)
+        protected override string DefaultComment { get { return "Object can't be serialized!"; } }
+
+        public CustomSerializationException(string comment = "")
+            : base(comment)
         { }
     }
 
     public class CustomArgumentException : CustomException
     {
-        public CustomArgumentException(string param)
-            : base("Argument", "Параметр {0} указан не верно!", param)
-        { }
+        public override string Identifier { get { return "Argument"; } }
 
+        protected override string DefaultComment { get { return "Invalid argument!"; } }
+
+        public CustomArgumentException(string comment = "")
+            : base(comment)
+        { }
     }
 }

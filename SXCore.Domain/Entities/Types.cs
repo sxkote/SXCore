@@ -1,6 +1,6 @@
 ﻿using SXCore.Common.Interfaces;
 
-namespace SXCore.Common.Entities
+namespace SXCore.Domain.Entities
 {
     public abstract class Types : Entity, IType
     {

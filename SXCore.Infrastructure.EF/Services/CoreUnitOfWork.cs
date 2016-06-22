@@ -2,6 +2,8 @@
 using SXCore.Common.Entities;
 using SXCore.Common.Interfaces;
 using SXCore.Common.Services;
+using SXCore.Domain.Contracts;
+using SXCore.Domain.Entities;
 using SXCore.Infrastructure.EF.Data;
 using System;
 using System.Collections.Generic;

@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SXCore.Lexems", "SXCore.Lexems\SXCore.Lexems.csproj", "{68CA2380-A4DC-4984-ACBA-835BF193C272}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SXCore.Shared", "SXCore.Shared\SXCore.Shared.csproj", "{D594C04A-C342-4569-AEC3-901929112062}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{ED7779F3-B6EB-4FC5-8BFB-DE8BB02742A1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Lexems", "Tests\Tests.Lexems\Tests.Lexems.csproj", "{8B32C3D2-954E-484D-A20A-87D2C0080D5A}"
@@ -21,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SXCore.Infrastructure.EF", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SXCore.WebApi", "SXCore.WebApi\SXCore.WebApi.csproj", "{51A2930C-0318-4F0D-9F16-55285345B2C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SXCore.Domain", "SXCore.Domain\SXCore.Domain.csproj", "{F75A8467-5754-4B4B-8B0C-D1D7DE11DF7E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,10 +31,6 @@ Global
 		{68CA2380-A4DC-4984-ACBA-835BF193C272}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68CA2380-A4DC-4984-ACBA-835BF193C272}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68CA2380-A4DC-4984-ACBA-835BF193C272}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D594C04A-C342-4569-AEC3-901929112062}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D594C04A-C342-4569-AEC3-901929112062}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D594C04A-C342-4569-AEC3-901929112062}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D594C04A-C342-4569-AEC3-901929112062}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8B32C3D2-954E-484D-A20A-87D2C0080D5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8B32C3D2-954E-484D-A20A-87D2C0080D5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B32C3D2-954E-484D-A20A-87D2C0080D5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,6 +55,10 @@ Global
 		{51A2930C-0318-4F0D-9F16-55285345B2C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51A2930C-0318-4F0D-9F16-55285345B2C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51A2930C-0318-4F0D-9F16-55285345B2C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F75A8467-5754-4B4B-8B0C-D1D7DE11DF7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F75A8467-5754-4B4B-8B0C-D1D7DE11DF7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F75A8467-5754-4B4B-8B0C-D1D7DE11DF7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F75A8467-5754-4B4B-8B0C-D1D7DE11DF7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

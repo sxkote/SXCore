@@ -3,7 +3,7 @@ using SXCore.Common.Services;
 using SXCore.Common.Values;
 using System;
 
-namespace SXCore.Common.Entities
+namespace SXCore.Domain.Entities
 {
     public class FileBlob : Entity, ICoded
     {
@@ -65,5 +65,4 @@ namespace SXCore.Common.Entities
             };
         }
     }
-
 }

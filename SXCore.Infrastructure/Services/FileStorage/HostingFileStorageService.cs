@@ -32,6 +32,11 @@ namespace SXCore.Infrastructure.Services.FileStorage
         {
             return HostingFileStorageService.MapPath(String.IsNullOrEmpty(_root) ? path : (_root + path));
         }
+
+        public override string GetFileUrl(string path, int hours = 4)
+        {
+            return GetVirtualPath(String.IsNullOrEmpty(_root) ? path : (_root + path));
+        }
         #endregion
 
         #region Statics

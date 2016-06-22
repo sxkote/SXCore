@@ -53,7 +53,7 @@ namespace SXCore.WebApi
 
         protected HttpResponseMessage ReturnFile(FileData file)
         {
-            if (file == null)
+            if (file == null || file.Data == null)
                 return new HttpResponseMessage(HttpStatusCode.NoContent);
 
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);

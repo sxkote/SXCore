@@ -3,7 +3,7 @@ using SXCore.Common.Services;
 using SXCore.Common.Values;
 using System;
 
-namespace SXCore.Common.Entities
+namespace SXCore.Domain.Entities
 {
     public class Avatar : Entity, ICoded
     {
@@ -15,23 +15,15 @@ namespace SXCore.Common.Entities
         public const int Quality = 90;
 
         public string Code { get; private set; }
-        public string Value { get; private set; }
 
         private Avatar()
         {
             this.Code = Guid.NewGuid().ToString();
-            this.Value = "";
         }
 
-        public Avatar(string code, string value = "")
+        public Avatar(string code)
         {
             this.Code = code;
-            this.Value = value ?? "";
-        }
-
-        public void ChangeValue(string value)
-        {
-            this.Value = value ?? "";
         }
 
         public override string ToString()
@@ -47,9 +39,9 @@ namespace SXCore.Common.Entities
         static public implicit operator string(Avatar avatar)
         { return avatar == null ? null : avatar.Code; }
 
-        static public Avatar CreateAvatar(string value = "")
+        static public Avatar CreateAvatar()
         {
-            return new Avatar() { Value = value ?? "" };
+            return new Avatar();
         }
 
         static public FileData MakeAvatarFile(byte[] data, int maxSize = Avatar.MaxSize, int quality = Avatar.Quality, string avatarFileName = Avatar.FileName, string mimeType = Avatar.MimeType)
