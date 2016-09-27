@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using SXCore.Common;
 
 namespace Tests.Practice
 {
@@ -73,6 +74,15 @@ namespace Tests.Practice
             act(t, ConturType.Circle);
             act(t, ConturType.Box);
             act(t, ConturType.Apple);
+        }
+
+        [TestMethod]
+        public void Test_split_formatted()
+        {
+            var input = "name1 = hello; name2 = \"apple ; birne ; mushroom\" ; name3 = some 'other , with \" and other text ;'; name4 = \"here's my new age;\";";
+            var form = input.SplitFormatted(';').ToList();
+            var pars = input.SplitParams();
+            Assert.AreEqual(4, pars.Count);
         }
     }
 }

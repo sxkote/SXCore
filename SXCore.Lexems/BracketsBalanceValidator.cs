@@ -5,24 +5,49 @@ using System.Linq;
 
 namespace SXCore.Lexems
 {
-    internal interface IBracketsBalancer<T>
+    internal interface IBracketsBalanceValidator<T>
     {
+        /// <summary>
+        /// Is the input is balanced
+        /// </summary>
         bool IsBalanced { get; }
+
+        /// <summary>
+        /// Push nex input item in validator
+        /// </summary>
+        /// <param name="arg">Next item of the input</param>
         void Push(T arg);
     }
 
-    internal class BracketsStringBalancer : IBracketsBalancer<string>
+    internal class BracketsBalanceStringValidator : IBracketsBalanceValidator<string>
     {
+        /// <summary>
+        /// Collection of Brackets Pairs used in validation
+        /// </summary>
         public List<SymbolPair> Pairs { get; private set; }
+
+        /// <summary>
+        /// Collection of Quotes used in validation
+        /// </summary>
         public List<string> Quotes { get; private set; }
 
+        /// <summary>
+        /// Current Quote in the input
+        /// </summary>
         protected string _currentQuote = "";
+
+        /// <summary>
+        /// Stack of Brackets in the input
+        /// </summary>
         protected Stack<string> _balance;
 
+        /// <summary>
+        /// Is the input is balanced
+        /// </summary>
         public bool IsBalanced
         { get { return _balance.Count <= 0 && String.IsNullOrEmpty(_currentQuote); } }
 
-        public BracketsStringBalancer(SymbolPair[] pairs, string[] quotes)
+        public BracketsBalanceStringValidator(SymbolPair[] pairs, string[] quotes)
         {
             this.Pairs = pairs == null ? new List<SymbolPair>() : new List<SymbolPair>(pairs);
             this.Quotes = quotes == null ? new List<string>() : new List<string>(quotes);
@@ -31,9 +56,13 @@ namespace SXCore.Lexems
             _balance = new Stack<string>();
         }
 
-        public BracketsStringBalancer(params SymbolPair[] pairs)
+        public BracketsBalanceStringValidator(params SymbolPair[] pairs)
             : this(pairs, LexemValueText.Quotes) { }
 
+        /// <summary>
+        /// Push next item of the input
+        /// </summary>
+        /// <param name="value">Next item</param>
         public void Push(string value)
         {
             // we are already in the quoted text part
@@ -65,29 +94,43 @@ namespace SXCore.Lexems
         }
     }
 
-    internal class BracketsLexemBalancer : IBracketsBalancer<Lexem>
+    internal class BracketsBalanceLexemValidator : IBracketsBalanceValidator<Lexem>
     {
+        /// <summary>
+        /// Collection of Brackets Pairs used in validation
+        /// </summary>
         public List<SymbolPair> Pairs {get; private set;}
 
+        /// <summary>
+        /// Stack of Brackets in the input
+        /// </summary>
         protected Stack<Lexem> _balance;
 
+        /// <summary>
+        /// Is the input is balanced
+        /// </summary>
         public bool IsBalanced
         { get { return _balance.Count <= 0; } }
 
-        public BracketsLexemBalancer(params SymbolPair[] pairs)
+        public BracketsBalanceLexemValidator(params SymbolPair[] pairs)
         {
             this.Pairs = pairs == null ? new List<SymbolPair>() : new List<SymbolPair>(pairs);
 
             _balance = new Stack<Lexem>();
         }
 
+
+        /// <summary>
+        /// Push next item of the input
+        /// </summary>
+        /// <param name="value">Next item</param>
         public void Push(Lexem value)
         {
             if (value == null)
                 return;
 
             // if the bracket is pushed
-            var pair = Pairs.FirstOrDefault(p => p.Contains(value.ToString()));
+            var pair = this.Pairs.FirstOrDefault(p => p.Contains(value.ToString()));
             if (pair == null)
                 return;
 

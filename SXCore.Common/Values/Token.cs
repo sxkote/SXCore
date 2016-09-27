@@ -1,4 +1,5 @@
-﻿using SXCore.Common.Contracts;
+﻿using Newtonsoft.Json;
+using SXCore.Common.Contracts;
 using SXCore.Common.Enums;
 using SXCore.Common.Interfaces;
 using System;
@@ -18,12 +19,18 @@ namespace SXCore.Common.Values
 
         protected ParamValueCollection _values;
 
+        [JsonProperty]
         public S SubscriptionID { get; protected set; }
+        [JsonProperty]
         public P PersonID { get; protected set; }
+        [JsonProperty]
         public M ManagerID { get; protected set; }
 
+        [JsonProperty]
         public string Login { get; protected set; }
+        [JsonProperty]
         public string Key { get; protected set; }
+        [JsonProperty]
         public DateTimeOffset? Expire { get; protected set; }
 
         public PersonName Name { get; set; }
@@ -32,6 +39,7 @@ namespace SXCore.Common.Values
         public string[] Roles { get; set; }
         public string[] Pemissions { get; set; }
 
+        [JsonProperty]
         public ParamValueCollection Values
         {
             get

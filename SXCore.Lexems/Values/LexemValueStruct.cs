@@ -35,10 +35,13 @@ namespace SXCore.Lexems.Values
         {
             string input = String.IsNullOrEmpty(text) ? null : text.Trim();
             if (String.IsNullOrEmpty(input) || input[0] != '{' || input[input.Length - 1] != '}')
-                throw new FormatException("Struct format is incorrect");
+                throw new FormatException("Struct format is incorrect: no brackets");
+
+            // get input without brackets
+            input = input.Substring(1, input.Length - 2).Trim();
 
             // split the input text into members inputs
-            var values = Lexem.Split(input.Substring(1, input.Length - 2).Trim(), new char[] { ',' }, new SymbolPair[] { new SymbolPair('{', '}') });
+            var values = input.Split(new char[] { ',' }, new SymbolPair[] { new SymbolPair('{', '}') });
             if (values == null || values.Count <= 0)
                 throw new FormatException("Struct format is incorrect: no members");
 
@@ -70,12 +73,13 @@ namespace SXCore.Lexems.Values
 
         public override LexemVariable Execute(Lexem lexem, ILexemEnvironment environment = null)
         {
-            if (lexem == null) return null;
+            if (lexem == null)
+                throw new InvalidOperationException("Can't execute null lexem on Value");
 
             if (lexem is LexemVariable)
                 return this[((LexemVariable)lexem).Name];
 
-            return null;
+            return base.Execute(lexem, environment);
         }
 
         new public static LexemValueStruct Parse(ref string text)
@@ -89,7 +93,7 @@ namespace SXCore.Lexems.Values
                 return null;
 
             // find the end of the lexem (find closing bracket '}')
-            int index = Lexem.Find(text, new char[] { '}' }, 1, new SymbolPair[] { new SymbolPair('{', '}') });
+            int index = text.Find(new char[] { '}' }, 1, new SymbolPair[] { new SymbolPair('{', '}') });
             if (index <= 0)
                 return null;
 

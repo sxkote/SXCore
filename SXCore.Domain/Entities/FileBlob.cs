@@ -21,6 +21,20 @@ namespace SXCore.Domain.Entities
             this.Code = Guid.NewGuid().ToString();
         }
 
+        public void ChangeFolder(string folder)
+        {
+            this.Folder = folder;
+        }
+
+        public void ChangeContentInfo(long size, string hash, DateTimeOffset? date = null)
+        {
+            this.Size = size;
+            this.Hash = hash ?? "";
+
+            if (date != null)
+                this.Date = date.Value;
+        }
+
         public override string ToString()
         { return this.FileName.Name; }
 
@@ -55,9 +69,14 @@ namespace SXCore.Domain.Entities
 
         static public FileBlob Create(string folder, string filename, string hash, long size)
         {
+            var blobFolder = String.IsNullOrWhiteSpace(folder) ? "" : folder.Trim();
+
+            if (!String.IsNullOrEmpty(blobFolder) && !blobFolder.EndsWith("/"))
+                blobFolder += "/";
+
             return new FileBlob()
             {
-                Folder = String.IsNullOrEmpty(folder) ? "" : folder,
+                Folder = blobFolder,
                 FileName = filename ?? "file",
                 Date = CommonService.Now,
                 Hash = hash ?? "",

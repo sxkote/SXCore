@@ -4,6 +4,7 @@ using SXCore.Common.Services;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using SXCore.Common.Exceptions;
 
 namespace SXCore.Infrastructure.Services.FileStorage
 {
@@ -11,29 +12,56 @@ namespace SXCore.Infrastructure.Services.FileStorage
     {
         protected string _root = "";
 
+        public string Root
+        {
+            get { return _root; }
+            set
+            {
+                if (String.IsNullOrEmpty(value))
+                {
+                    _root = "";
+                }
+                else
+                {
+                    _root = value.Replace("\\", "/");
+                    if (!_root.EndsWith("/"))
+                        _root += "/";
+                }
+            }
+        }
+
+        public ILogger Logger { get; set; }
+
         public LocalFileStorageService()
         {
-            _root = "";
+            this.Root = "";
         }
 
         public LocalFileStorageService(FileStorageConfig config)
         {
-            if (String.IsNullOrEmpty(config.Root))
-                _root = "";
-            else
-            {
-                _root = config.Root.Replace("\\", "/");
+            if (config == null)
+                throw new CustomArgumentException("FileStorage Config is empty!");
 
-                if (!_root.EndsWith("/"))
-                    _root += "/";
-            }
+            this.Root = config.Root;
         }
 
-        public LocalFileStorageService(string config)
-            : this(Newtonsoft.Json.JsonConvert.DeserializeObject<FileStorageConfig>(config))
-        { }
+        public LocalFileStorageService(string root)
+        {
+            this.Root = root;
+        }
 
         #region Functions
+        protected void CreateDirectoryForFile(string filePath)
+        {
+            var fullPath = this.GetFullPath(filePath);
+
+            var info = new FileInfo(fullPath);
+
+            var directory = info.DirectoryName;
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+        }
+
         protected virtual string GetFullPath(string path)
         {
             return String.IsNullOrEmpty(_root) ? path : (_root + path);
@@ -41,13 +69,9 @@ namespace SXCore.Infrastructure.Services.FileStorage
 
         protected async Task SaveDataToFileAsync(string path, byte[] data, FileMode fileMode = FileMode.OpenOrCreate)
         {
+            this.CreateDirectoryForFile(path);
+
             var fullPath = this.GetFullPath(path);
-
-            var info = new FileInfo(fullPath);
-
-            var directory = info.DirectoryName;
-            if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
 
             using (var fs = File.Open(fullPath, fileMode))
                 await fs.WriteAsync(data, 0, data.Length);
@@ -114,9 +138,14 @@ namespace SXCore.Infrastructure.Services.FileStorage
 
         public void CopyFile(string sourcePath, string destinationPath, bool deleteSource = false)
         {
+            if (sourcePath.Equals(destinationPath, CommonService.StringComparison))
+                return;
+
             var sourceFullPath = this.GetFullPath(sourcePath);
             if (!File.Exists(sourceFullPath))
                 return;
+
+            this.CreateDirectoryForFile(destinationPath);
 
             var destFullPath = this.GetFullPath(destinationPath);
             File.Copy(sourceFullPath, destFullPath, true);
@@ -155,6 +184,11 @@ namespace SXCore.Infrastructure.Services.FileStorage
             var info = new FileInfo(fullPath);
 
             return info.Length;
+        }
+
+        public bool Exist(string path)
+        {
+            return File.Exists(this.GetFullPath(path));
         }
 
         public async Task ReadFileToStreamAsync(string path, Stream stream, long offset, long length)

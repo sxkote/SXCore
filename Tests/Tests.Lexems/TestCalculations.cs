@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SXCore.Lexems;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Tests.Lexems
 {
@@ -64,6 +66,53 @@ namespace Tests.Lexems
             Assert.AreEqual(4, LexemExpression.Calculate("b = a > 10 ? v2*2 : 0", _environment).Value);
 
             Assert.AreEqual(4, _environment["b"].Value);
+        }
+
+        [TestMethod]
+        public void CalcExceptions()
+        {
+            LexemEnvironment env = new LexemEnvironment();
+            env.Add("a", 10);
+            env.Add("b", 7);
+            env.Add("c", 2);
+
+            //Func<LexemValue, Lexem, LexemVariable> exec = (v, l) => 
+            //{
+            //    if (l is LexemFunction && ((LexemFunction)l).Name.Equals("myfunc", StringComparison.InvariantCultureIgnoreCase))
+            //        return 100;
+            //    if (l is LexemVariable && ((LexemVariable)l).Name.Equals("myprop", StringComparison.InvariantCultureIgnoreCase))
+            //        return -100;
+            //    return null;
+            //};
+
+            //env.OnLexemExecution = new LexemEnvironment.OnLexemExecutionDelegate(exec);
+
+            var inputs = new List<string>();
+            inputs.Add("(10-b))*a+(c-3)");
+            inputs.Add("(10-b) *a e+(c-3)");
+            inputs.Add("(10-b)*a+(c-3),");
+            inputs.Add("(10-b)*a+(c.myfunc()-3)");
+            inputs.Add("(10-b)*a+(c.myprop-3)");
+
+            foreach (var input in inputs)
+            {
+                try
+                {
+                    var exp = new LexemExpression(input);
+                    var res = exp.Calculate(env);
+                }
+                catch (NullReferenceException ex)
+                {
+                    throw new Exception($"Null Argument Exception should NOT be generated on {input}!");
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine(ex.Message);
+                    continue;
+                }
+
+                throw new Exception($"Exception should be generated on {input}!");
+            }
         }
     }
 }

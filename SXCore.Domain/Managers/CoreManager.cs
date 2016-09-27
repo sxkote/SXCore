@@ -143,19 +143,19 @@ namespace SXCore.Domain.Managers
             return size > 5 * 1024 * 1024;
         }
 
-        public void OnBeforeFileDataSave(FileData fileData)
+        public virtual void OnBeforeFileDataSave(FileData fileData)
         {
             if (this.BeforeFileDataSave != null)
                 this.BeforeFileDataSave(this, new EventArgument<UploadFileDataInfo>(new UploadFileDataInfo(fileData)));
         }
 
-        public void OnBeforeFileChunksSave(string chunksPath, FileUpload fileUpload)
+        public virtual void OnBeforeFileChunksSave(string chunksPath, FileUpload fileUpload)
         {
             if (this.BeforeFileChunksSave != null)
                 this.BeforeFileChunksSave(this, new EventArgument<UploadChunksDataInfo>(new UploadChunksDataInfo(chunksPath, fileUpload)));
         }
 
-        public FileBlob SaveFile(FileData file, string folder = "")
+        public virtual FileBlob SaveFile(FileData file, string folder = "")
         {
             if (this.FileStorageService == null)
                 return null;
@@ -180,7 +180,7 @@ namespace SXCore.Domain.Managers
             return this.UnitOfWork.Create(blob);
         }
 
-        protected FileBlob UploadFile(FileUpload upload, string folder = "")
+        public virtual FileBlob UploadFile(FileUpload upload, string folder = "")
         {
             if (this.FileStorageService == null)
                 return null;

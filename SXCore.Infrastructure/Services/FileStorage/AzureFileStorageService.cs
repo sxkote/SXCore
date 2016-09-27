@@ -1,6 +1,9 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.Storage.Shared.Protocol;
 using SXCore.Common.Contracts;
+using SXCore.Common.Exceptions;
+using SXCore.Common.Services;
 using SXCore.Infrastructure.Values;
 using System;
 using System.Collections.Generic;
@@ -14,19 +17,30 @@ namespace SXCore.Infrastructure.Services.FileStorage
     public class AzureFileStorageService : IFileStorageService
     {
         public const string BlockFormat = "000000";
+        public const int MaxUploadBlobSize = 4 * 1024 * 1024;
 
         protected readonly string _connectionString = "";
-        protected readonly string _root = "";
+        protected string _root = "";
+
+        public string Root
+        {
+            get { return _root; }
+            set { _root = String.IsNullOrEmpty(value) ? "" : value.TrimEnd('/'); }
+        }
+
+        public ILogger Logger { get; set; }
 
         public AzureFileStorageService(FileStorageConfig config)
         {
             _connectionString = config.ConnectionString;
-            _root = String.IsNullOrEmpty(config.Root) ? "" : config.Root.TrimEnd('/');
+            this.Root = config.Root;
         }
 
-        public AzureFileStorageService(string config)
-            : this(Newtonsoft.Json.JsonConvert.DeserializeObject<FileStorageConfig>(config))
-        { }
+        public AzureFileStorageService(string connectionString, string root = "")
+        {
+            _connectionString = connectionString;
+            this.Root = root;
+        }
 
         #region Functions
         protected CloudBlobClient GetStorageClient()
@@ -65,7 +79,7 @@ namespace SXCore.Infrastructure.Services.FileStorage
 
         public CloudBlockBlob GetBlobReference(string path)
         {
-            string fullpath = String.IsNullOrEmpty(_root) ? path : String.Format("{0}/{1}", _root, path);
+            string fullpath = String.IsNullOrEmpty(this.Root) ? path : String.Format("{0}/{1}", this.Root, path);
 
             var container = this.GetContainer(AzureFileStorageService.GetBlobContainer(fullpath));
             container.CreateIfNotExists(BlobContainerPublicAccessType.Off);
@@ -102,6 +116,32 @@ namespace SXCore.Infrastructure.Services.FileStorage
 
             return blockItems.OrderBy(i => i.position).Select(i => i.name);
         }
+
+        protected void LogMessage(string message)
+        {
+            if (this.Logger != null)
+                this.Logger.Log("  AzureStorageService:: " + message ?? "");
+        }
+
+        public void AllowCORS()
+        {
+            var client = this.GetStorageClient();
+
+            var serviceProperties = client.GetServiceProperties();
+
+            serviceProperties.Cors.CorsRules.Clear();
+
+            serviceProperties.Cors.CorsRules.Add(new CorsRule()
+            {
+                AllowedHeaders =  { "*" },
+                AllowedMethods = CorsHttpMethods.Get | CorsHttpMethods.Head,
+                AllowedOrigins = { "*" },
+                ExposedHeaders = { "*" },
+                MaxAgeInSeconds = 600
+            });
+
+            client.SetServiceProperties(serviceProperties);
+        }
         #endregion
 
         #region IFileStorageService
@@ -127,35 +167,99 @@ namespace SXCore.Infrastructure.Services.FileStorage
             return result;
         }
 
+        //public void SaveFile(string path, byte[] data)
+        //{
+        //    if (data == null)
+        //        throw new CustomArgumentException("NULL Data can't be written to Storage!");
+
+        //    var blob = this.GetBlobReference(path);
+
+        //    List<string> blocks = new List<string>();
+
+        //    using (MemoryStream ms = new MemoryStream(data))
+        //    {
+        //        byte[] buffer = new byte[MaxUploadBlobSize];
+        //        int index = 0, offset = 0, readed = 0;
+
+        //        this.LogMessage($"begin uploading to {path} [{data.Length}]");
+
+        //        // reading portions from the array
+        //        while ((readed = ms.Read(buffer, offset, MaxUploadBlobSize)) > 0)
+        //        {
+        //            // move through array
+        //            offset += readed;
+
+        //            // generate new blockID
+        //            var blockID = this.GetBlobBlockID(index);
+
+        //            // put block with buffer into storage
+        //            blob.PutBlock(blockID, new MemoryStream(buffer), null);
+
+        //            // remember blockID to be saved
+        //            blocks.Add(blockID);
+
+        //            this.LogMessage($"uploaded block {index}:{blockID} [{buffer.Length}]");
+
+        //            // increase index to get next blockID
+        //            index++;
+        //        }
+        //    }
+
+        //    // write to storage
+        //    blob.PutBlockList(blocks);
+
+        //    this.LogMessage($"complete uploading to {path} [{data.Length}] with {blocks.Count} blocks");
+        //}
+
         public void SaveFile(string path, byte[] data)
         {
-            var blob = this.GetBlobReference(path);
-
-            var blockID = this.GetBlobBlockID(0);
-
-            blob.PutBlock(blockID, new MemoryStream(data), null);
-
-            blob.PutBlockList(new string[] { blockID });
+            var task = Task.Run(() => this.SaveFileAsync(path, data));
+            task.ConfigureAwait(false);
+            task.Wait();
         }
 
         public async Task SaveFileAsync(string path, byte[] data)
         {
+            if (data == null)
+                throw new CustomArgumentException("NULL Data can't be written to Storage!");
+
             var blob = this.GetBlobReference(path);
 
-            //var options = new BlobRequestOptions()
-            //{
-            //    MaximumExecutionTime = new TimeSpan(0, 5, 0),
-            //    ServerTimeout = new TimeSpan(0, 5, 0)
-            //};
+            List<string> blocks = new List<string>();
 
-            //await blob.UploadFromByteArrayAsync(data, 0, data.Length);
+            using (MemoryStream ms = new MemoryStream(data))
+            {
+                byte[] buffer = new byte[MaxUploadBlobSize];
+                int index = 0, offset = 0, readed = 0;
 
-            //saving through the blocks give the opportunity to Append Blob
-            var blockID = this.GetBlobBlockID(0);
+                this.LogMessage($"begin uploading to {path} [{data.Length}]");
 
-            blob.PutBlock(blockID, new MemoryStream(data), null);
+                // reading portions from the array
+                while ((readed = await ms.ReadAsync(buffer, 0, MaxUploadBlobSize)) > 0)
+                {
+                    // move through array
+                    offset += readed;
 
-            await blob.PutBlockListAsync(new string[] { blockID });
+                    // generate new blockID
+                    var blockID = this.GetBlobBlockID(index);
+
+                    // put block with buffer into storage
+                    await blob.PutBlockAsync(blockID, new MemoryStream(buffer, 0, readed), null);
+
+                    // remember blockID to be saved
+                    blocks.Add(blockID);
+
+                    this.LogMessage($"uploaded block {index}:{blockID} [{readed}]");
+
+                    // increase index to get next blockID
+                    index++;
+                }
+            }
+
+            // write to storage
+            await blob.PutBlockListAsync(blocks);
+
+            this.LogMessage($"complete uploading to {path} [{data.Length}] with {blocks.Count} blocks");
         }
 
         public void AppendFile(string path, byte[] data, int chunkID = -1)
@@ -212,6 +316,9 @@ namespace SXCore.Infrastructure.Services.FileStorage
 
         public void CopyFile(string sourcePath, string destinationPath, bool deleteSource = false)
         {
+            if (sourcePath.Equals(destinationPath, CommonService.StringComparison))
+                return;
+
             var source = this.GetBlobReference(sourcePath);
             if (source == null && !source.Exists())
                 return;
@@ -270,6 +377,12 @@ namespace SXCore.Infrastructure.Services.FileStorage
             return blob.Properties.Length;
         }
 
+        public bool Exist(string path)
+        {
+            var blob = this.GetBlobReference(path);
+            return blob != null && blob.Exists();
+        }
+
         public async Task ReadFileToStreamAsync(string path, Stream stream, long offset, long length)
         {
             var blob = this.GetBlobReference(path);
@@ -307,6 +420,7 @@ namespace SXCore.Infrastructure.Services.FileStorage
         }
         #endregion
 
+
         #region Statics
         static protected string GetBlobContainer(string path)
         {
@@ -320,6 +434,25 @@ namespace SXCore.Infrastructure.Services.FileStorage
             if (path.Contains('/'))
                 return path.Substring(path.IndexOf('/') + 1);
             return path.ToLower();
+        }
+
+        static public string CreateAzureSASToken(string connection, int hours = 5)
+        {
+            // Create Azure Account with Connection String
+            CloudStorageAccount account = CloudStorageAccount.Parse(connection);
+
+            // Create a new access policy for the account.
+            SharedAccessAccountPolicy policy = new SharedAccessAccountPolicy()
+            {
+                Permissions = SharedAccessAccountPermissions.Read | SharedAccessAccountPermissions.List,
+                Services = SharedAccessAccountServices.Blob,
+                ResourceTypes = SharedAccessAccountResourceTypes.Object,
+                SharedAccessExpiryTime = DateTime.UtcNow.AddHours(5),
+                Protocols = SharedAccessProtocol.HttpsOrHttp
+            };
+
+            // Return the SAS token.
+            return account.GetSharedAccessSignature(policy);
         }
         #endregion
     }

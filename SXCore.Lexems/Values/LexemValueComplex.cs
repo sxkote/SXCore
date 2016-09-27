@@ -84,7 +84,8 @@ namespace SXCore.Lexems.Values
 
         public override LexemVariable Execute(Lexem lexem, ILexemEnvironment environment = null)
         {
-            if (lexem == null) return null;
+            if (lexem == null)
+                throw new InvalidOperationException("Can't execute null lexem on Value");
 
             var function = lexem as LexemFunction;
             if (function != null)

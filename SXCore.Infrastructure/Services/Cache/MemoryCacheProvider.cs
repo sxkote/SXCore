@@ -40,7 +40,7 @@ namespace SXCore.Infrastructure.Services.Cache
 
         public void Set(string key, object value, TimeSpan timespan)
         {
-            if (value == null)
+            if (Object.ReferenceEquals(value, null) || value == null)
                 this.Remove(key);
 
             if (this.Contains(key))

@@ -24,6 +24,17 @@ namespace SXCore.Common.Values
             return $"{this.First} {this.Last}";
         }
 
+        public string ToString(string format)
+        {
+            if (String.IsNullOrEmpty(format))
+                return this.ToString();
+
+            return format
+                .Replace("first", this.First).Replace("1", this.First)
+                .Replace("last", this.Last).Replace("3", this.Last)
+                .Trim();
+        }
+
         public override int GetHashCode()
         {
             return this.ToString().GetHashCode();
@@ -81,6 +92,23 @@ namespace SXCore.Common.Values
         public override string ToString()
         {
             return $"{this.First} {this.Second} {this.Last}";
+        }
+
+        public string ToString(string format)
+        {
+            if (String.IsNullOrEmpty(format))
+                return this.ToString();
+
+            return format
+                .Replace("first", this.First).Replace("1", this.First)
+                .Replace("second", this.Second).Replace("2", this.Second)
+                .Replace("last", this.Last).Replace("3", this.Last)
+                .Trim();
+        }
+
+        public string ToShortString()
+        {
+            return $"{this.First} {this.Last}".Trim();
         }
 
         public override bool Equals(object name)
@@ -155,6 +183,29 @@ namespace SXCore.Common.Values
         {
             var maidenValue = String.IsNullOrEmpty(this.Maiden) ? "" : $"({this.Maiden})";
             return $"{this.First} {this.Second} {this.Last} {maidenValue}".Trim();
+        }
+
+        public string ToString(string format)
+        {
+            if (String.IsNullOrEmpty(format))
+                return this.ToString();
+
+            return format
+                .Replace("first", this.First).Replace("1", this.First)
+                .Replace("second", this.Second).Replace("2", this.Second)
+                .Replace("last", this.Last).Replace("3", this.Last)
+                .Replace("maiden", this.Maiden).Replace("4", this.Maiden)
+                .Trim();
+        }
+
+        public string ToShortString()
+        {
+            return $"{this.First} {this.Last}".Trim();
+        }
+
+        public string ToFullString()
+        {
+            return $"{this.First} {this.Second} {this.Last}".Trim();
         }
 
         public override bool Equals(object name)

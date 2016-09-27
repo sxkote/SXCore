@@ -51,8 +51,11 @@ namespace SXCore.Lexems
 
         public LexemVariable Execute(Lexem lexem, ILexemEnvironment environment = null)
         {
+            if (lexem == null)
+                throw new InvalidOperationException("Can't execute null lexem on Variable");
+
             if (this.Value == null)
-                return null;
+                throw new InvalidOperationException("Can't execute Lexem on empty Value");
 
             return this.Value.Execute(lexem, environment);
         }

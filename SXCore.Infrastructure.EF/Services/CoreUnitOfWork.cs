@@ -26,6 +26,11 @@ namespace SXCore.Infrastructure.EF.Services
             _dbContext = new TContext();
         }
 
+        public CoreUnitOfWork(TContext context)
+        {
+            _dbContext = context;
+        }
+
         public void SaveChanges()
         {
             this.DbContext.SaveChanges();

@@ -27,7 +27,7 @@ namespace SXCore.Lexems
 
             var arguments_input = text.Substring(index + 1, text.Length - 1 - index - 1).Trim();
 
-            var args = Lexem.Split(arguments_input, new char[] { ';',',' }, LexemBracket.Brackets);
+            var args = arguments_input.Split(new char[] { ';',',' }, LexemBracket.Brackets);
             if (args != null)
                 foreach (var arg in args)
                     this.Arguments.Add(new LexemExpression(arg));
@@ -125,7 +125,7 @@ namespace SXCore.Lexems
             if (String.IsNullOrEmpty(functionName))
                 return null;
 
-            int closeBracketIndex = Lexem.Find(text, new char[] { ')' }, match.Value.Length, LexemBracket.Brackets);
+            int closeBracketIndex = text.Find(new char[] { ')' }, match.Value.Length, LexemBracket.Brackets);
             if (closeBracketIndex < 0)
                 return null;
 

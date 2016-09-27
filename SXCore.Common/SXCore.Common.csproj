@@ -96,7 +96,6 @@
     <Compile Include="Values\Message.cs" />
     <Compile Include="Values\Owner.cs" />
     <Compile Include="Values\ParamValue.cs" />
-    <Compile Include="Values\Period.cs" />
     <Compile Include="Values\PersonName.cs" />
     <Compile Include="Values\Subscriber.cs" />
     <Compile Include="Values\Token.cs" />

@@ -66,10 +66,6 @@ namespace SXCore.Infrastructure.Services.Notifications
         public EmailNotificationService(EmailServerConfig config)
         { _config = config; }
 
-        public EmailNotificationService(string config)
-            : this(Newtonsoft.Json.JsonConvert.DeserializeObject<EmailServerConfig>(config))
-        { }
-
         public void SendEmail(string toEmail, string subject, string text, ICollection<FileData> files = null)
         {
             if (_config == null)

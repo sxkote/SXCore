@@ -126,6 +126,9 @@ namespace SXCore.Common.Values
                 this.Add(value.Name, value.Value, value.Type);
         }
 
+        public bool HasValue(string name)
+        { return this.Find(name) != null; }
+
         public ParamValue Find(string name)
         {
             return this.FirstOrDefault(v => v.Name.Equals(name, CommonService.StringComparison));

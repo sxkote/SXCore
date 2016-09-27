@@ -34,7 +34,7 @@ namespace SXCore.Infrastructure.EF.Data
             modelBuilder.Configurations.Add(new PersonNameComplexTypeConfiguration());
             modelBuilder.Configurations.Add(new PersonFullNameComplexTypeConfiguration());
             modelBuilder.Configurations.Add(new PersonTotalNameComplexTypeConfiguration());
-            modelBuilder.Configurations.Add(new PeriodComplexTypeConfiguration());
+            //modelBuilder.Configurations.Add(new PeriodComplexTypeConfiguration());
 
             // Entities
             modelBuilder.Configurations.Add(new AvatarConfiguration());

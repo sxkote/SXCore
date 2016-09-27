@@ -54,8 +54,8 @@
       <HintPath>..\packages\WindowsAzure.Storage.6.0.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\Litskevich\Litskevich.Family\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -75,8 +75,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppSettingsInfrastructureProvider.cs" />
-    <Compile Include="AppSettingsProvider.cs" />
+    <Compile Include="Services\FileStorage\FTPFileStorageService.cs" />
+    <Compile Include="Services\InfrastructureProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AppSettingsProvider.cs" />
     <Compile Include="Services\Cache\MemoryCacheProvider.cs" />
@@ -85,10 +85,12 @@
     <Compile Include="Services\FileStorage\AzureFileStorageService.cs" />
     <Compile Include="Services\FileStorage\HostingFileStorageService.cs" />
     <Compile Include="Services\FileStorage\LocalFileStorageService.cs" />
+    <Compile Include="Services\Log\Logger.cs" />
     <Compile Include="Services\Notifications\DebugNotificationService.cs" />
     <Compile Include="Services\Notifications\EmailNotificationService.cs" />
     <Compile Include="Values\EmailServerConfig.cs" />
     <Compile Include="Values\FileStorageConfig.cs" />
+    <Compile Include="Values\FTPServerConfig.cs" />
     <Compile Include="Values\SmsServiceConfig.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +100,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

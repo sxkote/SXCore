@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SXCore.WebApi", "SXCore.Web
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SXCore.Domain", "SXCore.Domain\SXCore.Domain.csproj", "{F75A8467-5754-4B4B-8B0C-D1D7DE11DF7E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Infrastructure", "Tests\Tests.Infrastructure\Tests.Infrastructure.csproj", "{861EB66C-4D47-4B1F-AE8D-07A108788794}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{F75A8467-5754-4B4B-8B0C-D1D7DE11DF7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F75A8467-5754-4B4B-8B0C-D1D7DE11DF7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F75A8467-5754-4B4B-8B0C-D1D7DE11DF7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{861EB66C-4D47-4B1F-AE8D-07A108788794}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{861EB66C-4D47-4B1F-AE8D-07A108788794}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{861EB66C-4D47-4B1F-AE8D-07A108788794}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{861EB66C-4D47-4B1F-AE8D-07A108788794}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,5 +72,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{8B32C3D2-954E-484D-A20A-87D2C0080D5A} = {ED7779F3-B6EB-4FC5-8BFB-DE8BB02742A1}
 		{6F3802D5-C85C-4878-AFA3-4098893FC7BD} = {ED7779F3-B6EB-4FC5-8BFB-DE8BB02742A1}
+		{861EB66C-4D47-4B1F-AE8D-07A108788794} = {ED7779F3-B6EB-4FC5-8BFB-DE8BB02742A1}
 	EndGlobalSection
 EndGlobal

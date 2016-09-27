@@ -29,45 +29,6 @@ namespace SXCore.Lexems
             return null;
         }
 
-        public static List<string> Split(string text, char[] separators, SymbolPair[] brackets = null)
-        {
-            if (String.IsNullOrWhiteSpace(text))
-                return null;
-
-            var result = new List<string>();
-
-            var input = text;
-            while (!String.IsNullOrWhiteSpace(input))
-            {
-                var index = Lexem.Find(input, separators, 0, brackets);
-
-                var value = (index < 0) ? input : input.Substring(0, index);
-
-                result.Add(value);
-
-                input = input.Crop(value.Length + 1);
-            }
-
-            return result;
-        }
-
-        public static int Find(string text, char[] find, int index = 0, SymbolPair[] brackets = null)
-        {
-            if (String.IsNullOrWhiteSpace(text))
-                return -1;
-
-            var balancer = new BracketsStringBalancer(brackets);
-            for (int i = index; i < text.Length; i++)
-            {
-                if (find.Contains(text[i]) && balancer.IsBalanced)
-                    return i;
-
-                balancer.Push(text[i].ToString());
-            }
-
-            return -1;
-        }
-
         #region Operators
         public static implicit operator Lexem(decimal value)
         { return (LexemValueNumber)value; }
@@ -120,7 +81,7 @@ namespace SXCore.Lexems
             var pairs = LexemBracket.Brackets.ToList();
             pairs.Add(new SymbolPair('?', ':'));
 
-            var balancer = new BracketsLexemBalancer(pairs.ToArray());
+            var balancer = new BracketsBalanceLexemValidator(pairs.ToArray());
 
             while (!String.IsNullOrWhiteSpace(input))
             {

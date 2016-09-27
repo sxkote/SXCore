@@ -2,6 +2,8 @@
 {
     public class EmailServerConfig
     {
+        public const int DefaultSMTPPort = 25;
+
         public string Server { get; set; }
         public int Port { get; set; }
         public bool SSL { get; set; }
@@ -14,7 +16,7 @@
 
         public EmailServerConfig()
         {
-            Port = 25;
+            Port = DefaultSMTPPort;
             SSL = true;
         }
     }

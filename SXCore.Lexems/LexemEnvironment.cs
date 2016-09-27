@@ -14,22 +14,32 @@ namespace SXCore.Lexems
         LexemVariable Set(string name, LexemValue value);
 
         LexemVariable Calculate(LexemFunction function);
+        LexemVariable Execute(LexemValue argument, Lexem lexem);
     }
 
     public class LexemEnvironment : ILexemEnvironment
     {
-        public delegate LexemVariable OnFunctionExecuting(LexemFunction function);
+        public delegate LexemVariable OnFunctionCalculationDelegate(LexemFunction function);
+        public delegate LexemVariable OnLexemExecutionDelegate(LexemValue argument, Lexem lexem);
 
         protected List<LexemVariable> _variables = new List<LexemVariable>();
-        protected OnFunctionExecuting onFunctionExecuting = null;
+
+        protected OnFunctionCalculationDelegate _onFunctionCalculation = null;
+        protected OnLexemExecutionDelegate _onLexemExecution = null;
 
         public ICollection<LexemVariable> Variables
         { get { return _variables.AsReadOnly(); } }
 
-        public OnFunctionExecuting FunctionExecuting
+        public OnFunctionCalculationDelegate OnFunctionCalculation
         {
-            get { return onFunctionExecuting; }
-            set { onFunctionExecuting = value; }
+            get { return _onFunctionCalculation; }
+            set { _onFunctionCalculation = value; }
+        }
+
+        public OnLexemExecutionDelegate OnLexemExecution
+        {
+            get { return _onLexemExecution; }
+            set { _onLexemExecution = value; }
         }
 
         public LexemVariable this[string name]
@@ -88,8 +98,16 @@ namespace SXCore.Lexems
 
         public virtual LexemVariable Calculate(LexemFunction function)
         {
-            if (this.FunctionExecuting != null)
-                return this.FunctionExecuting(function);
+            if (this.OnFunctionCalculation != null)
+                return this.OnFunctionCalculation(function);
+
+            return null;
+        }
+
+        public virtual LexemVariable Execute(LexemValue argument, Lexem lexem)
+        {
+            if (this.OnLexemExecution != null)
+                return this.OnLexemExecution(argument, lexem);
 
             return null;
         }

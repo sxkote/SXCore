@@ -38,7 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LexemAnalyzer.cs" />
-    <Compile Include="BracketsBalancer.cs" />
+    <Compile Include="BracketsBalanceValidator.cs" />
     <Compile Include="LexemEnvironment.cs" />
     <Compile Include="LexemExpression.cs" />
     <Compile Include="Extensions.cs" />

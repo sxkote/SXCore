@@ -11,5 +11,10 @@ namespace SXCore.Infrastructure.Services
         {
             return System.Configuration.ConfigurationManager.AppSettings[name];
         }
+
+        static public string GetConnectionString(string name)
+        {
+            return System.Configuration.ConfigurationManager.ConnectionStrings[name]?.ConnectionString;
+        }
     }
 }

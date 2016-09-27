@@ -9,7 +9,10 @@ namespace SXCore.Lexems
     {
         public virtual LexemVariable Execute(Lexem lexem, ILexemEnvironment environment = null)
         {
-            return null;
+            if (lexem == null)
+                throw new InvalidOperationException("Can't execute null Lexem");
+
+            return environment.Execute(this, lexem);
         }
 
         public static LexemValue GetValue(Lexem lexem)

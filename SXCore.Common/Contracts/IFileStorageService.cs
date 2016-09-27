@@ -5,6 +5,8 @@ namespace SXCore.Common.Contracts
 {
     public interface IFileStorageService
     {
+        ILogger Logger { get; set; }
+
         byte[] ReadFile(string path);
         Task<byte[]> ReadFileAsync(string path);
 
@@ -20,6 +22,7 @@ namespace SXCore.Common.Contracts
 
         string HashMD5OfFile(string path);
         long SizeOfFile(string path);
+        bool Exist(string path);
 
         Task ReadFileToStreamAsync(string path, Stream stream);
         Task ReadFileToStreamAsync(string path, Stream stream, long offset, long length);
