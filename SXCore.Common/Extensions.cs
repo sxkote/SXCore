@@ -77,7 +77,7 @@ namespace SXCore.Common
                     name = name.Substring(1, name.Length - 2);
 
                 var value = split[1].Trim();
-                if (value.Length > 2 && value[0] == value[name.Length - 1] && separators.Contains(value[0]))
+                if (value.Length > 2 && value[0] == value[value.Length - 1] && separators.Contains(value[0]))
                     value = value.Substring(1, value.Length - 2);
 
                 result.Add(name, value);
